@@ -10,17 +10,15 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import lombok.RequiredArgsConstructor;
 import net.minecraft.client.Minecraft;
 
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.function.Consumer;
 
+@RequiredArgsConstructor(staticName = "withPipeline")
 public class RenderPassBuilder {
-
-    public static RenderPassBuilder withPipeline(RenderPipeline pipeline) {
-        return new RenderPassBuilder(pipeline);
-    }
 
     private static <T> Consumer<T> andThen(Consumer<T> first, Consumer<T> second) {
         if (first == null) return second;
@@ -30,12 +28,6 @@ public class RenderPassBuilder {
     private final RenderPipeline pipeline;
     private Consumer<VertexConsumer> vertexCreator;
     private Consumer<RenderPass> uniformSetter;
-
-    public RenderPassBuilder(RenderPipeline pipeline) {
-        this.pipeline = pipeline;
-        this.vertexCreator = null;
-        this.uniformSetter = null;
-    }
 
     public RenderPassBuilder withVertices(Consumer<VertexConsumer> vertexCreator) {
         this.vertexCreator = RenderPassBuilder.andThen(this.vertexCreator, vertexCreator);

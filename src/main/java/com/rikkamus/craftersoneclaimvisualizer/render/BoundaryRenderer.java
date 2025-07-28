@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.rikkamus.craftersoneclaimvisualizer.Boundary;
+import lombok.experimental.UtilityClass;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -12,6 +13,7 @@ import org.joml.Vector4f;
 
 import java.util.Collection;
 
+@UtilityClass
 public class BoundaryRenderer {
 
     public static void renderBoundaries(RenderContext context, Iterable<Boundary> boundaries) {
@@ -96,10 +98,6 @@ public class BoundaryRenderer {
 
         consumer.addVertex(pose, topLeft.x, topLeft.y, topLeft.z).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setNormal(pose, quadNormal);
         consumer.addVertex(pose, bottomLeft.x, bottomLeft.y, bottomLeft.z).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setNormal(pose, quadNormal);
-    }
-
-    private BoundaryRenderer() {
-
     }
 
 }

@@ -6,9 +6,11 @@ import com.mojang.blaze3d.platform.DepthTestFunction;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.rikkamus.craftersoneclaimvisualizer.ClaimVisualizerMod;
+import lombok.experimental.UtilityClass;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.ResourceLocation;
 
+@UtilityClass
 public class BoundaryPipelines {
 
     public static final RenderPipeline BOUNDARY_FILL_PIPELINE;
@@ -38,10 +40,6 @@ public class BoundaryPipelines {
                                                   .withDepthWrite(false)
                                                   .withDepthBias(-3f, -3f)
                                                   .build();
-    }
-
-    private BoundaryPipelines() {
-
     }
 
 }
