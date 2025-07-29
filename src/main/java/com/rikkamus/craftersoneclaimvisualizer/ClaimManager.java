@@ -5,7 +5,6 @@ import com.rikkamus.craftersoneclaimvisualizer.render.BoundaryRenderer;
 import com.rikkamus.craftersoneclaimvisualizer.render.RenderContext;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.joml.Vector2f;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class ClaimManager {
         outlineColor.w = ClaimManager.BOUNDARY_OUTLINE_OPACITY;
 
         this.boundaries.add(new Boundary(
-            claim.getCoords().stream().map(point -> new Vector2f(point.x, point.y)).toList(),
+            claim.getShape(),
             ClaimManager.BOUNDARY_MIN_Y,
             ClaimManager.BOUNDARY_MAX_Y,
             fillColor,

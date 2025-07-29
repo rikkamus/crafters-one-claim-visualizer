@@ -11,7 +11,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-import java.util.Collection;
+import java.awt.*;
 
 @UtilityClass
 public class BoundaryRenderer {
@@ -31,7 +31,7 @@ public class BoundaryRenderer {
                     renderQuadTriangles(vertexConsumer, context.pose(), bottomLeft, bottomRight, topRight, topLeft, rgba);
                 });
 
-                boundaries.forEach(boundary -> renderVerticalPrism(boundary.getPoints(), boundary.getY1(), boundary.getY2(), boundary.getFillRgba(), renderer));
+                boundaries.forEach(boundary -> renderVerticalPrism(boundary.getBase(), boundary.getY1(), boundary.getY2(), boundary.getFillRgba(), renderer));
             })
             .withDefaultUniforms()
             .withUniform("DynamicTransforms", dynamicTransforms)
@@ -43,24 +43,26 @@ public class BoundaryRenderer {
                     renderQuadOutline(vertexConsumer, context.pose(), bottomLeft, bottomRight, topRight, topLeft, rgba);
                 });
 
-                boundaries.forEach(boundary -> renderVerticalPrism(boundary.getPoints(), boundary.getY1(), boundary.getY2(), boundary.getOutlineRgba(), renderer));
+                boundaries.forEach(boundary -> renderVerticalPrism(boundary.getBase(), boundary.getY1(), boundary.getY2(), boundary.getOutlineRgba(), renderer));
             })
             .withDefaultUniforms()
             .withUniform("DynamicTransforms", dynamicTransforms)
             .renderToMainTarget(context.name());
     }
 
-    private static void renderVerticalPrism(Collection<Vector2f> points, float y1, float y2, Vector4f rgba, QuadRenderer renderer) {
+    private static void renderVerticalPrism(Polygon base, float y1, float y2, Vector4f rgba, QuadRenderer renderer) {
         Vector2f first = null;
         Vector2f prev = null;
 
-        for (Vector2f point : points) {
+        for (int i = 0; i < base.npoints; i++) {
+            Vector2f point = new Vector2f(base.xpoints[i], base.ypoints[i]);
+
             if (first == null) first = point;
             if (prev != null) renderVerticalQuad(prev, point, y1, y2, rgba, renderer);
             prev = point;
         }
 
-        if (points.size() > 2) {
+        if (base.npoints > 2) {
             renderVerticalQuad(prev, first, y1, y2, rgba, renderer);
         }
     }
