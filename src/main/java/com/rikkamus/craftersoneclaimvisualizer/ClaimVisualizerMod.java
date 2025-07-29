@@ -1,42 +1,109 @@
 package com.rikkamus.craftersoneclaimvisualizer;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.rikkamus.craftersoneclaimvisualizer.render.BoundaryRenderer;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.logging.LogUtils;
+import com.rikkamus.craftersoneclaimvisualizer.claim.ClaimRepository;
+import com.rikkamus.craftersoneclaimvisualizer.claim.Claim;
+import com.rikkamus.craftersoneclaimvisualizer.claim.RepositoryFetchException;
 import com.rikkamus.craftersoneclaimvisualizer.render.RenderContext;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.world.level.Level;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import org.joml.Vector2f;
-import org.joml.Vector4f;
+import org.slf4j.Logger;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.concurrent.CompletableFuture;
 
 @Mod(ClaimVisualizerMod.MOD_ID)
 public class ClaimVisualizerMod {
 
     public static final String MOD_ID = "craftersoneclaimvisualizer";
-    public static final String MOD_VERSION = "0.1.0";
 
-    public ClaimVisualizerMod() {
-        NeoForge.EVENT_BUS.addListener(this::onParticlesRendered);
+    private static final Logger LOGGER = LogUtils.getLogger();
+
+    private final ClaimRepository claimRepository;
+    private CompletableFuture<Collection<Claim>> pendingClaimRequest = null;
+    private ClaimManager claimManager = null;
+
+    private boolean showClaims = false;
+
+    public ClaimVisualizerMod(ModContainer container) {
+        this.claimRepository = new ClaimRepository(String.format("Crafters.one Claim Visualizer Mod/%s", container.getModInfo().getVersion().toString()));
+
+        NeoForge.EVENT_BUS.register(this);
     }
 
-    private void onParticlesRendered(RenderLevelStageEvent.AfterParticles event) {
-        PoseStack stack = event.getPoseStack();
+    private void loadClaims() {
+        if (this.claimManager == null) this.claimManager = new ClaimManager();
+
+        if (this.pendingClaimRequest != null) this.pendingClaimRequest.cancel(true);
+        this.pendingClaimRequest = this.claimRepository.findAllClaims();
+    }
+
+    @SubscribeEvent
+    private void onClientTick(ClientTickEvent.Pre event) {
+        if (this.pendingClaimRequest != null && this.pendingClaimRequest.isDone()) {
+            if (!this.pendingClaimRequest.isCancelled()) {
+                try {
+                    Collection<Claim> claims = this.pendingClaimRequest.join();
+                    this.claimManager.clearClaims();
+                    this.claimManager.addAllClaims(claims);
+
+                    ChatLogger.log("Claims loaded!", ChatFormatting.GREEN);
+                } catch (Exception e) {
+                    ClaimVisualizerMod.LOGGER.error("Failed to load claims.", e);
+
+                    String errorMessage = e instanceof RepositoryFetchException fetchException ? fetchException.getMessage() : "Unknown error (check logs).";
+                    ChatLogger.log(String.format("Failed to load claims: %s", errorMessage), ChatFormatting.RED);
+                }
+            }
+
+            this.pendingClaimRequest = null;
+        }
+    }
+
+    @SubscribeEvent
+    private void onLevelRendered(RenderLevelStageEvent.AfterLevel event) {
+        if (!this.showClaims || Minecraft.getInstance().player == null || Minecraft.getInstance().player.level().dimension() != Level.OVERWORLD) return;
+
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        RenderContext context = new RenderContext(ClaimVisualizerMod.MOD_ID, event.getPoseStack().last(), camera.position().toVector3f(), event.getModelViewMatrix());
 
-        Vector4f fillRgba = new Vector4f(14f / 255f, 233f / 255f, 125f / 255f, 0.2f);
-        Vector4f outlineRgba = new Vector4f(14f / 255f, 233f / 255f, 125f / 255f, 0.8f);
+        this.claimManager.renderClaimBoundaries(context);
+    }
 
-        RenderContext context = new RenderContext(ClaimVisualizerMod.MOD_ID, stack.last(), camera.position().toVector3f(), event.getModelViewMatrix());
-        List<Boundary> boundaries = List.of(
-            new Boundary(List.of(new Vector2f(-1f, -1f), new Vector2f(1f, 1f), new Vector2f(2f, 0f)), -1f, 1f, fillRgba, outlineRgba),
-            new Boundary(List.of(new Vector2f(-1f, -3f), new Vector2f(1f, -1f), new Vector2f(2f, -2f)), -1f, 1f, fillRgba, outlineRgba)
-        );
+    @SubscribeEvent
+    private void onRegisterClientCommands(RegisterClientCommandsEvent event) {
+        event.getDispatcher().register(Commands.literal("claims").then(Commands.literal("show").executes(this::onShowClaimsCommand)));
+        event.getDispatcher().register(Commands.literal("claims").then(Commands.literal("hide").executes(this::onHideClaimsCommand)));
+        event.getDispatcher().register(Commands.literal("claims").then(Commands.literal("refresh").executes(this::onRefreshClaimsCommand)));
+    }
 
-        BoundaryRenderer.renderBoundaries(context, boundaries);
+    private int onShowClaimsCommand(CommandContext<CommandSourceStack> context) {
+        if (this.claimManager == null) loadClaims();
+        this.showClaims = true;
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int onHideClaimsCommand(CommandContext<CommandSourceStack> context) {
+        this.showClaims = false;
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int onRefreshClaimsCommand(CommandContext<CommandSourceStack> context) {
+        loadClaims();
+        return Command.SINGLE_SUCCESS;
     }
 
 }
