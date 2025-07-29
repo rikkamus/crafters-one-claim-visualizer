@@ -6,6 +6,7 @@ import com.mojang.logging.LogUtils;
 import com.rikkamus.craftersoneclaimvisualizer.claim.ClaimRepository;
 import com.rikkamus.craftersoneclaimvisualizer.claim.Claim;
 import com.rikkamus.craftersoneclaimvisualizer.claim.RepositoryFetchException;
+import com.rikkamus.craftersoneclaimvisualizer.render.ClaimInfoOverlayRenderer;
 import com.rikkamus.craftersoneclaimvisualizer.render.RenderContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Camera;
@@ -13,12 +14,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
@@ -75,14 +76,21 @@ public class ClaimVisualizerMod {
 
     @SubscribeEvent
     private void onLevelRendered(RenderLevelStageEvent.AfterLevel event) {
-        if (!this.showClaims) return;
-        if (Minecraft.getInstance().player == null || Minecraft.getInstance().player.level().dimension() != Level.OVERWORLD) return;
-        if (Minecraft.getInstance().options.hideGui) return;
+        if (!isRenderingClaims()) return;
 
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         RenderContext context = new RenderContext(ClaimVisualizerMod.MOD_ID, event.getPoseStack().last(), camera.position().toVector3f(), event.getModelViewMatrix());
 
         this.claimManager.renderClaimBoundaries(context);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    private void onGuiRendered(RenderGuiEvent.Post event) {
+        if (!isRenderingClaims()) return;
+        if (Minecraft.getInstance().gui.getDebugOverlay().showDebugScreen()) return;
+
+        Vec3 playerPos = Minecraft.getInstance().player.position();
+        ClaimInfoOverlayRenderer.renderClaimOverlay(this.claimManager.getClaimAt(playerPos.x, playerPos.z).orElse(null), event.getGuiGraphics());
     }
 
     @SubscribeEvent
@@ -106,6 +114,13 @@ public class ClaimVisualizerMod {
     private int onRefreshClaimsCommand(CommandContext<CommandSourceStack> context) {
         loadClaims();
         return Command.SINGLE_SUCCESS;
+    }
+
+    private boolean isRenderingClaims() {
+        return this.showClaims &&
+            Minecraft.getInstance().player != null &&
+            Minecraft.getInstance().player.level().dimension() == Level.OVERWORLD &&
+            !Minecraft.getInstance().options.hideGui;
     }
 
 }

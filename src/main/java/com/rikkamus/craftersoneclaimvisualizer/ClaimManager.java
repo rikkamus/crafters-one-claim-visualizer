@@ -9,6 +9,7 @@ import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @NoArgsConstructor
 public class ClaimManager {
@@ -46,6 +47,14 @@ public class ClaimManager {
 
     public void addAllClaims(Iterable<Claim> claims) {
         claims.forEach(this::addClaim);
+    }
+
+    public Optional<Claim> getClaimAt(double x, double z) {
+        for (Claim claim : this.claims) {
+            if (claim.getShape().contains(x, z)) return Optional.of(claim);
+        }
+
+        return Optional.empty();
     }
 
     public void clearClaims() {
