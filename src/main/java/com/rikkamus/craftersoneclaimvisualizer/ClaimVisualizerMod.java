@@ -75,7 +75,9 @@ public class ClaimVisualizerMod {
 
     @SubscribeEvent
     private void onLevelRendered(RenderLevelStageEvent.AfterLevel event) {
-        if (!this.showClaims || Minecraft.getInstance().player == null || Minecraft.getInstance().player.level().dimension() != Level.OVERWORLD) return;
+        if (!this.showClaims) return;
+        if (Minecraft.getInstance().player == null || Minecraft.getInstance().player.level().dimension() != Level.OVERWORLD) return;
+        if (Minecraft.getInstance().options.hideGui) return;
 
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         RenderContext context = new RenderContext(ClaimVisualizerMod.MOD_ID, event.getPoseStack().last(), camera.position().toVector3f(), event.getModelViewMatrix());
