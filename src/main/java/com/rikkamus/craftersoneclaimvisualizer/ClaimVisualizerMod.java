@@ -17,11 +17,15 @@ import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.common.NeoForge;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.slf4j.Logger;
 
 import java.util.Collection;
@@ -34,16 +38,22 @@ public class ClaimVisualizerMod {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    private final ClaimRepository claimRepository;
+    private ClaimRepository claimRepository;
     private CompletableFuture<Collection<Claim>> pendingClaimRequest = null;
     private ClaimManager claimManager = null;
 
     private boolean showClaims = false;
 
-    public ClaimVisualizerMod(ModContainer container) {
-        this.claimRepository = new ClaimRepository(String.format("Crafters.one Claim Visualizer Mod/%s", container.getModInfo().getVersion().toString()));
+    public ClaimVisualizerMod(ModContainer container, IEventBus modEventBus) {
+        container.registerConfig(ModConfig.Type.CLIENT, Config.getSpec());
 
+        modEventBus.addListener(this::onClientSetup);
         NeoForge.EVENT_BUS.register(this);
+    }
+
+    public void onClientSetup(FMLClientSetupEvent event) {
+        ArtifactVersion version = event.getContainer().getModInfo().getVersion();
+        this.claimRepository = new ClaimRepository(String.format("Crafters.one Claim Visualizer Mod/%s", version.toString()), Config.getInstance().getApiRequestTimeout());
     }
 
     private void loadClaims() {
@@ -97,7 +107,21 @@ public class ClaimVisualizerMod {
         Profiler.get().push("claim_info_overlay");
 
         Vec3 playerPos = Minecraft.getInstance().player.position();
-        ClaimInfoOverlayRenderer.renderClaimOverlay(this.claimManager.getClaimAt(playerPos.x, playerPos.z).orElse(null), event.getGuiGraphics());
+        Config config = Config.getInstance();
+
+        int x = config.getOverlayX();
+        int y = config.getOverlayY();
+        if (x < 0) x += event.getGuiGraphics().guiWidth();
+        if (y < 0) y += event.getGuiGraphics().guiHeight();
+
+        ClaimInfoOverlayRenderer.renderClaimOverlay(
+            this.claimManager.getClaimAt(playerPos.x, playerPos.z).orElse(null),
+            x,
+            y,
+            config.getOverlayHorizontalAlignment(),
+            config.getOverlayVerticalAlignment(),
+            event.getGuiGraphics()
+        );
 
         Profiler.get().pop();
     }
