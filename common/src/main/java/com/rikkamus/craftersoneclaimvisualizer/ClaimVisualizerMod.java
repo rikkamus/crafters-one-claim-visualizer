@@ -52,6 +52,10 @@ public final class ClaimVisualizerMod {
 
     private void loadClaims() {
         if (this.pendingClaimRequest != null) this.pendingClaimRequest.cancel(true);
+
+        LOGGER.info("Loading claims...");
+        ChatLogger.log(String.format("Loading claims..."), ChatFormatting.YELLOW);
+
         this.pendingClaimRequest = this.claimRepository.findAllClaims();
     }
 
@@ -65,6 +69,7 @@ public final class ClaimVisualizerMod {
                     this.claimManager.clearClaims();
                     this.claimManager.addAllClaims(claims);
 
+                    LOGGER.info("Claims loaded!");
                     ChatLogger.log("Claims loaded!", ChatFormatting.GREEN);
                 } catch (Exception e) {
                     LOGGER.error("Failed to load claims.", e);
