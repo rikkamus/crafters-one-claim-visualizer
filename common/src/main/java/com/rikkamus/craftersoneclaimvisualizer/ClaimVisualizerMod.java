@@ -1,42 +1,36 @@
 package com.rikkamus.craftersoneclaimvisualizer;
 
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.logging.LogUtils;
-import com.rikkamus.craftersoneclaimvisualizer.claim.ClaimRepository;
 import com.rikkamus.craftersoneclaimvisualizer.claim.Claim;
+import com.rikkamus.craftersoneclaimvisualizer.claim.ClaimRepository;
 import com.rikkamus.craftersoneclaimvisualizer.claim.RepositoryFetchException;
 import com.rikkamus.craftersoneclaimvisualizer.render.ClaimInfoOverlayRenderer;
 import com.rikkamus.craftersoneclaimvisualizer.render.RenderContext;
+import lombok.RequiredArgsConstructor;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.event.*;
-import net.neoforged.neoforge.common.NeoForge;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.slf4j.Logger;
 
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
-@Mod(ClaimVisualizerMod.MOD_ID)
-public class ClaimVisualizerMod {
+@RequiredArgsConstructor
+public final class ClaimVisualizerMod {
 
     public static final String MOD_ID = "craftersoneclaimvisualizer";
 
     private static final Logger LOGGER = LogUtils.getLogger();
+
+    private final Config config;
 
     private ClaimRepository claimRepository;
     private CompletableFuture<Collection<Claim>> pendingClaimRequest = null;
@@ -44,16 +38,15 @@ public class ClaimVisualizerMod {
 
     private boolean showClaims = false;
 
-    public ClaimVisualizerMod(ModContainer container, IEventBus modEventBus) {
-        container.registerConfig(ModConfig.Type.CLIENT, Config.getSpec());
-
-        modEventBus.addListener(this::onClientSetup);
-        NeoForge.EVENT_BUS.register(this);
+    public ClaimVisualizerMod(Config config, String version) {
+        this.config = config;
+        this.claimRepository = new ClaimRepository(String.format("Crafters.one Claim Visualizer Mod/%s", version.toString()), config.getApiRequestTimeout());
     }
 
-    public void onClientSetup(FMLClientSetupEvent event) {
-        ArtifactVersion version = event.getContainer().getModInfo().getVersion();
-        this.claimRepository = new ClaimRepository(String.format("Crafters.one Claim Visualizer Mod/%s", version.toString()), Config.getInstance().getApiRequestTimeout());
+    public void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(Commands.literal("claims").then(Commands.literal("show").executes(this::onShowClaimsCommand)));
+        dispatcher.register(Commands.literal("claims").then(Commands.literal("hide").executes(this::onHideClaimsCommand)));
+        dispatcher.register(Commands.literal("claims").then(Commands.literal("refresh").executes(this::onRefreshClaimsCommand)));
     }
 
     private void loadClaims() {
@@ -61,8 +54,7 @@ public class ClaimVisualizerMod {
         this.pendingClaimRequest = this.claimRepository.findAllClaims();
     }
 
-    @SubscribeEvent
-    private void onClientTick(ClientTickEvent.Pre event) {
+    public void tick() {
         if (this.pendingClaimRequest != null && this.pendingClaimRequest.isDone()) {
             if (!this.pendingClaimRequest.isCancelled()) {
                 try {
@@ -74,7 +66,7 @@ public class ClaimVisualizerMod {
 
                     ChatLogger.log("Claims loaded!", ChatFormatting.GREEN);
                 } catch (Exception e) {
-                    ClaimVisualizerMod.LOGGER.error("Failed to load claims.", e);
+                    LOGGER.error("Failed to load claims.", e);
 
                     String errorMessage = e instanceof RepositoryFetchException fetchException ? fetchException.getMessage() : "Unknown error (check logs).";
                     ChatLogger.log(String.format("Failed to load claims: %s", errorMessage), ChatFormatting.RED);
@@ -85,52 +77,37 @@ public class ClaimVisualizerMod {
         }
     }
 
-    @SubscribeEvent
-    private void onLevelRendered(RenderLevelStageEvent.AfterLevel event) {
+    public void renderClaimBoundaries(RenderContext context) {
         if (!isRenderingClaims()) return;
 
         Profiler.get().push("claim_boundaries");
-
-        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        RenderContext context = new RenderContext(ClaimVisualizerMod.MOD_ID, event.getPoseStack().last(), camera.position().toVector3f(), event.getModelViewMatrix());
-
         this.claimManager.renderClaimBoundaries(context);
-
         Profiler.get().pop();
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    private void onGuiRendered(RenderGuiEvent.Post event) {
+    public void renderClaimInfoOverlay(GuiGraphics guiGraphics) {
         if (!isRenderingClaims()) return;
         if (Minecraft.getInstance().gui.getDebugOverlay().showDebugScreen()) return;
 
         Profiler.get().push("claim_info_overlay");
 
         Vec3 playerPos = Minecraft.getInstance().player.position();
-        Config config = Config.getInstance();
 
-        int x = config.getOverlayX();
-        int y = config.getOverlayY();
-        if (x < 0) x += event.getGuiGraphics().guiWidth();
-        if (y < 0) y += event.getGuiGraphics().guiHeight();
+        int x = this.config.getOverlayX();
+        int y = this.config.getOverlayY();
+        if (x < 0) x += guiGraphics.guiWidth();
+        if (y < 0) y += guiGraphics.guiHeight();
 
         ClaimInfoOverlayRenderer.renderClaimOverlay(
             this.claimManager.getClaimAt(playerPos.x, playerPos.z).orElse(null),
             x,
             y,
-            config.getOverlayHorizontalAlignment(),
-            config.getOverlayVerticalAlignment(),
-            event.getGuiGraphics()
+            this.config.getOverlayHorizontalAlignment(),
+            this.config.getOverlayVerticalAlignment(),
+            guiGraphics
         );
 
         Profiler.get().pop();
-    }
-
-    @SubscribeEvent
-    private void onRegisterClientCommands(RegisterClientCommandsEvent event) {
-        event.getDispatcher().register(Commands.literal("claims").then(Commands.literal("show").executes(this::onShowClaimsCommand)));
-        event.getDispatcher().register(Commands.literal("claims").then(Commands.literal("hide").executes(this::onHideClaimsCommand)));
-        event.getDispatcher().register(Commands.literal("claims").then(Commands.literal("refresh").executes(this::onRefreshClaimsCommand)));
     }
 
     private int onShowClaimsCommand(CommandContext<CommandSourceStack> context) {

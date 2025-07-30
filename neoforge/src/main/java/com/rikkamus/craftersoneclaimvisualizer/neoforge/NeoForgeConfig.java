@@ -1,5 +1,6 @@
-package com.rikkamus.craftersoneclaimvisualizer;
+package com.rikkamus.craftersoneclaimvisualizer.neoforge;
 
+import com.rikkamus.craftersoneclaimvisualizer.Config;
 import com.rikkamus.craftersoneclaimvisualizer.render.Alignment;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
@@ -7,18 +8,18 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
-public class Config {
+public class NeoForgeConfig implements Config {
 
-    private static final Config INSTANCE;
+    private static final NeoForgeConfig INSTANCE;
     private static final ModConfigSpec SPEC;
 
     static {
-        Pair<Config, ModConfigSpec> pair = new ModConfigSpec.Builder().configure(Config::new);
+        Pair<NeoForgeConfig, ModConfigSpec> pair = new ModConfigSpec.Builder().configure(NeoForgeConfig::new);
         INSTANCE = pair.getLeft();
         SPEC = pair.getRight();
     }
 
-    public static Config getInstance() {
+    public static NeoForgeConfig getInstance() {
         return INSTANCE;
     }
 
@@ -32,7 +33,7 @@ public class Config {
     private final ModConfigSpec.EnumValue<Alignment> overlayHorizontalAlignment;
     private final ModConfigSpec.EnumValue<Alignment> overlayVerticalAlignment;
 
-    private Config(ModConfigSpec.Builder builder) {
+    private NeoForgeConfig(ModConfigSpec.Builder builder) {
         builder.push("api");
         this.apiRequestTimeoutMillis = builder.gameRestart()
                                               .defineInRange("request_timeout_millis", 5000L, 100L, 60000L);
@@ -50,22 +51,27 @@ public class Config {
         builder.pop();
     }
 
+    @Override
     public Duration getApiRequestTimeout() {
         return Duration.of(this.apiRequestTimeoutMillis.get(), ChronoUnit.MILLIS);
     }
 
+    @Override
     public int getOverlayX() {
         return this.overlayX.get();
     }
 
+    @Override
     public int getOverlayY() {
         return this.overlayY.get();
     }
 
+    @Override
     public Alignment getOverlayHorizontalAlignment() {
         return this.overlayHorizontalAlignment.get();
     }
 
+    @Override
     public Alignment getOverlayVerticalAlignment() {
         return this.overlayVerticalAlignment.get();
     }

@@ -1,0 +1,29 @@
+modLoader = "javafml"
+loaderVersion = "[9,)"
+issueTrackerURL = "https://github.com/rikkamus/crafters-one-claim-visualizer/issues"
+license = "MIT"
+
+[[mods]]
+modId = "craftersoneclaimvisualizer"
+version = "${version}"
+displayName = "Crafters.one Claim Visualizer"
+displayURL="https://github.com/rikkamus/crafters-one-claim-visualizer"
+authors = "rikkamus"
+description = '''
+Allows viewing claimed land in-game.
+'''
+#logoFile = ""
+
+[[dependencies.craftersoneclaimvisualizer]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.7,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.craftersoneclaimvisualizer]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.7,)"
+ordering = "NONE"
+side = "BOTH"

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "craftersoneclaimvisualizer",
+  "version": "${version}",
+  "name": "Crafters.one Claim Visualizer",
+  "description": "Allows viewing claimed land in-game.",
+  "authors": [
+    "rikkamus"
+  ],
+  "contact": {
+    "homepage": "https://github.com/rikkamus/crafters-one-claim-visualizer",
+    "sources": "https://github.com/rikkamus/crafters-one-claim-visualizer"
+  },
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.rikkamus.craftersoneclaimvisualizer.fabric.ClaimVisualizerModFabric"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.17.0",
+    "minecraft": "~1.21.7",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
