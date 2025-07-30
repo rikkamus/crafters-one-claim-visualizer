@@ -41,7 +41,11 @@ public final class ClaimVisualizerMod {
 
     public ClaimVisualizerMod(ClaimVisualizerConfig config, String version) {
         this.config = config;
-        this.claimRepository = new ClaimRepository(String.format("Crafters.one Claim Visualizer Mod/%s", version.toString()), config.getApiRequestTimeout());
+        this.claimRepository = new ClaimRepository(
+            config.getApiEndpointUri(),
+            String.format("Crafters.one Claim Visualizer Mod/%s", version.toString()),
+            config.getApiRequestTimeout()
+        );
     }
 
     public void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher) {

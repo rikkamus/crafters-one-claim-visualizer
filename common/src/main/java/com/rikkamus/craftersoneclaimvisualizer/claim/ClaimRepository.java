@@ -14,18 +14,18 @@ import java.util.concurrent.CompletableFuture;
 
 public class ClaimRepository implements AutoCloseable {
 
-    private static final URI ENDPOINT_URI = URI.create("https://figbash.com/claims/data/claims.json");
-
     private static boolean isStatusOk(int responseCode) {
         return responseCode >= 200 && responseCode < 300;
     }
 
+    private final URI endpointUri;
     private final String userAgent;
     private final Duration timeout;
     private final HttpClient client;
     private final ObjectMapper objectMapper;
 
-    public ClaimRepository(String userAgent, Duration timeout) {
+    public ClaimRepository(URI endpointUri, String userAgent, Duration timeout) {
+        this.endpointUri = endpointUri;
         this.userAgent = userAgent;
         this.timeout = timeout;
         this.client = HttpClient.newBuilder()
@@ -36,7 +36,7 @@ public class ClaimRepository implements AutoCloseable {
     }
 
     public CompletableFuture<Collection<Claim>> findAllClaims() {
-        HttpRequest request = HttpRequest.newBuilder(ClaimRepository.ENDPOINT_URI)
+        HttpRequest request = HttpRequest.newBuilder(this.endpointUri)
                                          .setHeader(HttpHeaders.ACCEPT, "application/json")
                                          .setHeader(HttpHeaders.USER_AGENT, this.userAgent)
                                          .timeout(this.timeout)
