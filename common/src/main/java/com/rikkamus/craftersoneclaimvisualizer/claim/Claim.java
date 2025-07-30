@@ -1,16 +1,18 @@
 package com.rikkamus.craftersoneclaimvisualizer.claim;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Claim {
 
@@ -21,10 +23,28 @@ public class Claim {
     private List<String> collaborators;
     private String type;
     private String description;
-    private String color = "#15E685";
+    private String color;
 
+    @NotNull
     @JsonIgnore
     private Polygon shape;
+
+    @JsonCreator
+    public Claim(@JsonProperty("claimID") String claimId,
+                 @JsonProperty("owner") String owner,
+                 @JsonProperty("collaborators") List<String> collaborators,
+                 @JsonProperty("type") String type,
+                 @JsonProperty("description") String description,
+                 @JsonProperty("color") String color,
+                 @JsonProperty(value = "coords", required = true) int[][] points) {
+        this.claimId = claimId;
+        this.owner = owner;
+        this.collaborators = collaborators;
+        this.type = type;
+        this.description = description;
+        this.color = Objects.requireNonNullElse(color, "#15E685");
+        setCoords(Objects.requireNonNull(points));
+    }
 
     @JsonProperty("coords")
     public int[][] getCoords() {
@@ -40,6 +60,7 @@ public class Claim {
 
     @JsonProperty(value = "coords", required = true)
     public void setCoords(int[][] points) {
+        Objects.requireNonNull(points);
         int[] xpoints = new int[points.length];
         int[] ypoints = new int[points.length];
 
