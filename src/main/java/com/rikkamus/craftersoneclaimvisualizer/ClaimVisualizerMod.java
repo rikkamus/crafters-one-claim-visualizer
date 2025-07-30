@@ -46,8 +46,6 @@ public class ClaimVisualizerMod {
     }
 
     private void loadClaims() {
-        if (this.claimManager == null) this.claimManager = new ClaimManager();
-
         if (this.pendingClaimRequest != null) this.pendingClaimRequest.cancel(true);
         this.pendingClaimRequest = this.claimRepository.findAllClaims();
     }
@@ -58,6 +56,8 @@ public class ClaimVisualizerMod {
             if (!this.pendingClaimRequest.isCancelled()) {
                 try {
                     Collection<Claim> claims = this.pendingClaimRequest.join();
+
+                    if (this.claimManager == null) this.claimManager = new ClaimManager();
                     this.claimManager.clearClaims();
                     this.claimManager.addAllClaims(claims);
 
@@ -118,6 +118,7 @@ public class ClaimVisualizerMod {
 
     private boolean isRenderingClaims() {
         return this.showClaims &&
+            this.claimManager != null &&
             Minecraft.getInstance().player != null &&
             Minecraft.getInstance().player.level().dimension() == Level.OVERWORLD &&
             !Minecraft.getInstance().options.hideGui;
