@@ -1,0 +1,13 @@
+{
+  "text.autoconfig.craftersoneclaimvisualizer.title": "Crafters.one Claim Visualizer",
+
+  "text.autoconfig.craftersoneclaimvisualizer.category.claiminfooverlay": "Claim Info Overlay",
+  "text.autoconfig.craftersoneclaimvisualizer.category.advanced": "Advanced",
+
+  "text.autoconfig.craftersoneclaimvisualizer.option.overlayX": "X",
+  "text.autoconfig.craftersoneclaimvisualizer.option.overlayY": "Y",
+  "text.autoconfig.craftersoneclaimvisualizer.option.overlayHorizontalAlignment": "Horizontal Alignment",
+  "text.autoconfig.craftersoneclaimvisualizer.option.overlayVerticalAlignment": "Vertical Alignment",
+
+  "text.autoconfig.craftersoneclaimvisualizer.option.apiRequestTimeoutMillis": "API Request Timeout (ms)"
+}

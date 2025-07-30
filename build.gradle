@@ -24,6 +24,16 @@ subprojects {
 
     repositories {
         mavenCentral()
+
+        // Required by Cloth Config
+        maven {
+            url "https://maven.shedaniel.me/"
+        }
+
+        // Required by Mod Menu
+        maven {
+            url "https://maven.terraformersmc.com/releases/"
+        }
     }
 
     loom {

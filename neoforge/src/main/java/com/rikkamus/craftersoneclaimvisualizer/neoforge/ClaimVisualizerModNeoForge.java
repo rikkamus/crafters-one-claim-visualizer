@@ -1,18 +1,24 @@
 package com.rikkamus.craftersoneclaimvisualizer.neoforge;
 
 import com.rikkamus.craftersoneclaimvisualizer.ClaimVisualizerMod;
+import com.rikkamus.craftersoneclaimvisualizer.config.ClaimVisualizerConfig;
+import com.rikkamus.craftersoneclaimvisualizer.config.ClothConfig;
+import com.rikkamus.craftersoneclaimvisualizer.config.DefaultConfig;
 import com.rikkamus.craftersoneclaimvisualizer.render.RenderContext;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
+import me.shedaniel.clothconfig2.ClothConfigInitializer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 
@@ -21,16 +27,26 @@ public class ClaimVisualizerModNeoForge {
 
     private ClaimVisualizerMod mod;
 
-    public ClaimVisualizerModNeoForge(ModContainer container, IEventBus modEventBus) {
-        container.registerConfig(ModConfig.Type.CLIENT, NeoForgeConfig.getSpec());
-
+    public ClaimVisualizerModNeoForge(IEventBus modEventBus) {
         modEventBus.addListener(this::onClientSetup);
         NeoForge.EVENT_BUS.register(this);
     }
 
     public void onClientSetup(FMLClientSetupEvent event) {
+        ClaimVisualizerConfig config;
+
+        if (ModList.get().isLoaded(ClothConfigInitializer.MOD_ID)) {
+            config = AutoConfig.register(ClothConfig.class, JanksonConfigSerializer::new).getConfig();
+            event.getContainer().registerExtensionPoint(
+                IConfigScreenFactory.class,
+                (modContainer, parent) -> AutoConfig.getConfigScreen(ClothConfig.class, parent).get()
+            );
+        } else {
+            config = new DefaultConfig();
+        }
+
         ArtifactVersion version = event.getContainer().getModInfo().getVersion();
-        this.mod = new ClaimVisualizerMod(NeoForgeConfig.getInstance(), version.toString());
+        this.mod = new ClaimVisualizerMod(config, version.toString());
     }
 
     @SubscribeEvent

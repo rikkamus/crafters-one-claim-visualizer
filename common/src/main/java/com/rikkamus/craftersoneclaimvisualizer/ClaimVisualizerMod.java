@@ -7,6 +7,7 @@ import com.mojang.logging.LogUtils;
 import com.rikkamus.craftersoneclaimvisualizer.claim.Claim;
 import com.rikkamus.craftersoneclaimvisualizer.claim.ClaimRepository;
 import com.rikkamus.craftersoneclaimvisualizer.claim.RepositoryFetchException;
+import com.rikkamus.craftersoneclaimvisualizer.config.ClaimVisualizerConfig;
 import com.rikkamus.craftersoneclaimvisualizer.render.ClaimInfoOverlayRenderer;
 import com.rikkamus.craftersoneclaimvisualizer.render.RenderContext;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public final class ClaimVisualizerMod {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    private final Config config;
+    private final ClaimVisualizerConfig config;
 
     private ClaimRepository claimRepository;
     private CompletableFuture<Collection<Claim>> pendingClaimRequest = null;
@@ -38,7 +39,7 @@ public final class ClaimVisualizerMod {
 
     private boolean showClaims = false;
 
-    public ClaimVisualizerMod(Config config, String version) {
+    public ClaimVisualizerMod(ClaimVisualizerConfig config, String version) {
         this.config = config;
         this.claimRepository = new ClaimRepository(String.format("Crafters.one Claim Visualizer Mod/%s", version.toString()), config.getApiRequestTimeout());
     }
