@@ -13,6 +13,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
@@ -78,10 +79,14 @@ public class ClaimVisualizerMod {
     private void onLevelRendered(RenderLevelStageEvent.AfterLevel event) {
         if (!isRenderingClaims()) return;
 
+        Profiler.get().push("claim_boundaries");
+
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         RenderContext context = new RenderContext(ClaimVisualizerMod.MOD_ID, event.getPoseStack().last(), camera.position().toVector3f(), event.getModelViewMatrix());
 
         this.claimManager.renderClaimBoundaries(context);
+
+        Profiler.get().pop();
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -89,8 +94,12 @@ public class ClaimVisualizerMod {
         if (!isRenderingClaims()) return;
         if (Minecraft.getInstance().gui.getDebugOverlay().showDebugScreen()) return;
 
+        Profiler.get().push("claim_info_overlay");
+
         Vec3 playerPos = Minecraft.getInstance().player.position();
         ClaimInfoOverlayRenderer.renderClaimOverlay(this.claimManager.getClaimAt(playerPos.x, playerPos.z).orElse(null), event.getGuiGraphics());
+
+        Profiler.get().pop();
     }
 
     @SubscribeEvent
