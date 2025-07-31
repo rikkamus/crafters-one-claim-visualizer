@@ -1,8 +1,6 @@
 package com.rikkamus.craftersoneclaimvisualizer;
 
 import com.mojang.brigadier.Command;
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.context.CommandContext;
 import com.mojang.logging.LogUtils;
 import com.rikkamus.craftersoneclaimvisualizer.claim.Claim;
 import com.rikkamus.craftersoneclaimvisualizer.claim.ClaimRepository;
@@ -14,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -49,12 +45,6 @@ public final class ClaimVisualizerMod {
             String.format("Crafters.one Claim Visualizer Mod/%s", version.toString()),
             config.getApiRequestTimeout()
         );
-    }
-
-    public void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("claims").then(Commands.literal("show").executes(this::onShowClaimsCommand)));
-        dispatcher.register(Commands.literal("claims").then(Commands.literal("hide").executes(this::onHideClaimsCommand)));
-        dispatcher.register(Commands.literal("claims").then(Commands.literal("refresh").executes(this::onRefreshClaimsCommand)));
     }
 
     private void loadClaims() {
@@ -143,18 +133,18 @@ public final class ClaimVisualizerMod {
         Profiler.get().pop();
     }
 
-    private int onShowClaimsCommand(CommandContext<CommandSourceStack> context) {
+    public int showClaims() {
         if (this.claimManager == null) loadClaims();
         this.showClaims = true;
         return Command.SINGLE_SUCCESS;
     }
 
-    private int onHideClaimsCommand(CommandContext<CommandSourceStack> context) {
+    public int hideClaims() {
         this.showClaims = false;
         return Command.SINGLE_SUCCESS;
     }
 
-    private int onRefreshClaimsCommand(CommandContext<CommandSourceStack> context) {
+    public int refreshClaims() {
         loadClaims();
         return Command.SINGLE_SUCCESS;
     }

@@ -1,5 +1,7 @@
 package com.rikkamus.craftersoneclaimvisualizer.fabric;
 
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.context.CommandContext;
 import com.rikkamus.craftersoneclaimvisualizer.ClaimVisualizerMod;
 import com.rikkamus.craftersoneclaimvisualizer.config.ClaimVisualizerConfig;
 import com.rikkamus.craftersoneclaimvisualizer.config.ClothConfig;
@@ -8,10 +10,12 @@ import com.rikkamus.craftersoneclaimvisualizer.render.RenderContext;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.Version;
 import net.minecraft.client.Camera;
@@ -48,9 +52,26 @@ public final class ClaimVisualizerModFabric implements ClientModInitializer {
             (context, tickCounter) -> this.mod.renderClaimInfoOverlay(context)
         );
 
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            this.mod.registerCommands(dispatcher);
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, context) -> {
+            dispatcher.register(ClientCommandManager.literal("claims").then(ClientCommandManager.literal("show").executes(this::onShowClaimsCommand)));
+            dispatcher.register(ClientCommandManager.literal("claims").then(ClientCommandManager.literal("hide").executes(this::onHideClaimsCommand)));
+            dispatcher.register(ClientCommandManager.literal("claims").then(ClientCommandManager.literal("refresh").executes(this::onRefreshClaimsCommand)));
         });
+    }
+
+    private int onShowClaimsCommand(CommandContext<FabricClientCommandSource> context) {
+        this.mod.showClaims();
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int onHideClaimsCommand(CommandContext<FabricClientCommandSource> context) {
+        this.mod.hideClaims();
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int onRefreshClaimsCommand(CommandContext<FabricClientCommandSource> context) {
+        this.mod.refreshClaims();
+        return Command.SINGLE_SUCCESS;
     }
 
 }

@@ -1,5 +1,7 @@
 package com.rikkamus.craftersoneclaimvisualizer.neoforge;
 
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.context.CommandContext;
 import com.rikkamus.craftersoneclaimvisualizer.ClaimVisualizerMod;
 import com.rikkamus.craftersoneclaimvisualizer.config.ClaimVisualizerConfig;
 import com.rikkamus.craftersoneclaimvisualizer.config.ClothConfig;
@@ -10,6 +12,8 @@ import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import me.shedaniel.clothconfig2.ClothConfigInitializer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
@@ -68,7 +72,24 @@ public class ClaimVisualizerModNeoForge {
 
     @SubscribeEvent
     private void onRegisterClientCommands(RegisterClientCommandsEvent event) {
-        this.mod.registerCommands(event.getDispatcher());
+        event.getDispatcher().register(Commands.literal("claims").then(Commands.literal("show").executes(this::onShowClaimsCommand)));
+        event.getDispatcher().register(Commands.literal("claims").then(Commands.literal("hide").executes(this::onHideClaimsCommand)));
+        event.getDispatcher().register(Commands.literal("claims").then(Commands.literal("refresh").executes(this::onRefreshClaimsCommand)));
+    }
+
+    private int onShowClaimsCommand(CommandContext<CommandSourceStack> context) {
+        this.mod.showClaims();
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int onHideClaimsCommand(CommandContext<CommandSourceStack> context) {
+        this.mod.hideClaims();
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int onRefreshClaimsCommand(CommandContext<CommandSourceStack> context) {
+        this.mod.refreshClaims();
+        return Command.SINGLE_SUCCESS;
     }
 
 }
