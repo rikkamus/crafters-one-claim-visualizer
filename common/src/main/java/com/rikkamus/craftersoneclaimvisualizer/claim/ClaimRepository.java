@@ -4,13 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpHeaders;
 
 import java.net.*;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.net.http.*;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 public class ClaimRepository implements AutoCloseable {
 
@@ -42,7 +41,13 @@ public class ClaimRepository implements AutoCloseable {
                                          .timeout(this.timeout)
                                          .build();
 
-        return this.client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> {
+        return this.client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).exceptionally(e -> {
+            if (e instanceof HttpTimeoutException || (e instanceof CompletionException && e.getCause() instanceof HttpTimeoutException)) {
+                throw new RepositoryFetchException("Request timed out.", e);
+            } else {
+                throw new RuntimeException(e);
+            }
+        }).thenApply(response -> {
             int status = response.statusCode();
             if (!ClaimRepository.isStatusOk(status)) {
                 throw new RepositoryFetchException(String.format("Received error response from server (response code: %d).", status));

@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 @RequiredArgsConstructor
 public final class ClaimVisualizerMod {
@@ -80,7 +81,16 @@ public final class ClaimVisualizerMod {
                 } catch (Exception e) {
                     LOGGER.error("Failed to load claims.", e);
 
-                    String errorMessage = e instanceof RepositoryFetchException fetchException ? fetchException.getMessage() : "Unknown error (check logs).";
+                    String errorMessage;
+
+                    if (e instanceof RepositoryFetchException) {
+                        errorMessage = e.getMessage();
+                    } else if (e instanceof CompletionException && e.getCause() instanceof RepositoryFetchException fetchException) {
+                        errorMessage = fetchException.getMessage();
+                    } else {
+                        errorMessage = "Unknown error (check logs).";
+                    }
+
                     ChatLogger.log(String.format("Failed to load claims: %s", errorMessage), ChatFormatting.RED);
                 }
             }
