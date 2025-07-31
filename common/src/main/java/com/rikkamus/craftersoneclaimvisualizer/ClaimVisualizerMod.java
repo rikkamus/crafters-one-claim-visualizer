@@ -42,7 +42,7 @@ public final class ClaimVisualizerMod {
         this.config = config;
         this.claimRepository = new ClaimRepository(
             config.getApiEndpointUri(),
-            String.format("Crafters.one Claim Visualizer Mod/%s", version.toString()),
+            String.format("Crafters.one Claim Visualizer Mod/%s", version),
             config.getApiRequestTimeout()
         );
     }
