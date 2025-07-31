@@ -1,0 +1,50 @@
+name: Build
+
+on:
+  push:
+    paths-ignore:
+      - '*.md'
+  pull_request:
+    paths-ignore:
+      - '*.md'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make Gradle wrapper executable
+        run: chmod a+x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Copy artifacts
+        run: |
+          mkdir dist
+          cp neoforge/build/libs/*.jar dist
+          cp fabric/build/libs/*.jar dist
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: CraftersOneClaimVisualizer
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 7
