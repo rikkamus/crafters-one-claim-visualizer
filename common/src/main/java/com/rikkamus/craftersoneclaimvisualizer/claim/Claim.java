@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.rikkamus.craftersoneclaimvisualizer.Color;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import java.awt.*;
 import java.util.List;
@@ -23,7 +26,9 @@ public class Claim {
     private List<String> collaborators;
     private String type;
     private String description;
-    private String color;
+
+    @JsonIgnore
+    private Vector3f rgb;
 
     @NotNull
     @JsonIgnore
@@ -42,8 +47,18 @@ public class Claim {
         this.collaborators = collaborators;
         this.type = type;
         this.description = description;
-        this.color = Objects.requireNonNullElse(color, "#15E685");
+        setColor(color);
         setCoords(Objects.requireNonNull(points));
+    }
+
+    @JsonProperty("color")
+    public String getColor() {
+        return Color.toRgbaHex(new Vector4f(this.rgb.x, this.rgb.y, this.rgb.z, 1.0f));
+    }
+
+    @JsonProperty("color")
+    public void setColor(String color) {
+        this.rgb = color != null ? Color.parseRgbaHex(color).xyz(new Vector3f()) : null;
     }
 
     @JsonProperty("coords")

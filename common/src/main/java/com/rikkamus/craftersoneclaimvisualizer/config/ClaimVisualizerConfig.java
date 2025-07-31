@@ -1,11 +1,24 @@
 package com.rikkamus.craftersoneclaimvisualizer.config;
 
 import com.rikkamus.craftersoneclaimvisualizer.render.Alignment;
+import org.joml.Vector3f;
 
 import java.net.URI;
 import java.time.Duration;
 
 public interface ClaimVisualizerConfig {
+
+    int getClaimBoundaryMinY();
+
+    int getClaimBoundaryMaxY();
+
+    Vector3f getDefaultClaimBoundaryRgb();
+
+    float getClaimBoundaryFillOpacity();
+
+    float getClaimBoundaryOutlineOpacity();
+
+    boolean isDefaultBoundaryColorForced();
 
     int getOverlayX();
 

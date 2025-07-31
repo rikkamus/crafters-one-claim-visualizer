@@ -5,48 +5,28 @@ import com.rikkamus.craftersoneclaimvisualizer.render.BoundaryRenderer;
 import com.rikkamus.craftersoneclaimvisualizer.render.RenderContext;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @NoArgsConstructor
 public class ClaimManager {
 
-    private static final float BOUNDARY_MIN_Y = -64f;
-    private static final float BOUNDARY_MAX_Y = 320f;
-    private static final float BOUNDARY_FILL_OPACITY = 0.2f;
-    private static final float BOUNDARY_OUTLINE_OPACITY = 0.8f;
-
     @Getter
     private final List<Claim> claims = new ArrayList<>();
 
-    private final List<Boundary> boundaries = new ArrayList<>();
+    public void renderClaimBoundaries(RenderContext context, float y1, float y2, Function<Claim, Vector3f> rgbSupplier, float fillOpacity, float outlineOpacity) {
+        BoundaryRenderer.renderBoundaries(context, this.claims.stream().map(claim -> {
+            Vector3f claimRgb = rgbSupplier.apply(claim);
+            Vector4f fillRgba = new Vector4f(claimRgb.x, claimRgb.y, claimRgb.z, fillOpacity);
+            Vector4f outlineRgba = new Vector4f(claimRgb.x, claimRgb.y, claimRgb.z, outlineOpacity);
 
-    public void renderClaimBoundaries(RenderContext context) {
-        BoundaryRenderer.renderBoundaries(context, this.boundaries);
-    }
-
-    public void addClaim(Claim claim) {
-        this.claims.add(claim);
-
-        Vector4f fillColor = HexColor.parse(claim.getColor());
-        Vector4f outlineColor = new Vector4f(fillColor);
-        fillColor.w = ClaimManager.BOUNDARY_FILL_OPACITY;
-        outlineColor.w = ClaimManager.BOUNDARY_OUTLINE_OPACITY;
-
-        this.boundaries.add(new Boundary(
-            claim.getShape(),
-            ClaimManager.BOUNDARY_MIN_Y,
-            ClaimManager.BOUNDARY_MAX_Y,
-            fillColor,
-            outlineColor
-        ));
-    }
-
-    public void addAllClaims(Iterable<Claim> claims) {
-        claims.forEach(this::addClaim);
+            return new Boundary(claim.getShape(), y1, y2, fillRgba, outlineRgba);
+        }).toList());
     }
 
     public Optional<Claim> getClaimAt(double x, double z) {
@@ -57,9 +37,16 @@ public class ClaimManager {
         return Optional.empty();
     }
 
+    public void addClaim(Claim claim) {
+        this.claims.add(claim);
+    }
+
+    public void addAllClaims(Iterable<Claim> claims) {
+        claims.forEach(this::addClaim);
+    }
+
     public void clearClaims() {
         this.claims.clear();
-        this.boundaries.clear();
     }
 
 }

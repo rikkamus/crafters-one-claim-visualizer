@@ -1,11 +1,19 @@
 {
   "text.autoconfig.craftersoneclaimvisualizer.title": "Crafters.one Claim Visualizer",
 
+  "text.autoconfig.craftersoneclaimvisualizer.category.claimboundaries": "Claim Boundaries",
   "text.autoconfig.craftersoneclaimvisualizer.category.claiminfooverlay": "Claim Info Overlay",
   "text.autoconfig.craftersoneclaimvisualizer.category.advanced": "Advanced",
 
-  "text.autoconfig.craftersoneclaimvisualizer.option.overlayX": "X",
-  "text.autoconfig.craftersoneclaimvisualizer.option.overlayY": "Y",
+  "text.autoconfig.craftersoneclaimvisualizer.option.claimBoundaryMinY": "Minimum Y-Level",
+  "text.autoconfig.craftersoneclaimvisualizer.option.claimBoundaryMaxY": "Maximum Y-Level",
+  "text.autoconfig.craftersoneclaimvisualizer.option.defaultClaimBoundaryColor": "Default Color",
+  "text.autoconfig.craftersoneclaimvisualizer.option.defaultClaimBoundaryColorForced": "Always Use Default Color",
+  "text.autoconfig.craftersoneclaimvisualizer.option.claimBoundaryFillOpacity": "Fill Opacity",
+  "text.autoconfig.craftersoneclaimvisualizer.option.claimBoundaryOutlineOpacity": "Outline Opacity",
+
+  "text.autoconfig.craftersoneclaimvisualizer.option.overlayX": "Horizontal Offset",
+  "text.autoconfig.craftersoneclaimvisualizer.option.overlayY": "Vertical Offset",
   "text.autoconfig.craftersoneclaimvisualizer.option.overlayHorizontalAlignment": "Horizontal Alignment",
   "text.autoconfig.craftersoneclaimvisualizer.option.overlayVerticalAlignment": "Vertical Alignment",
 

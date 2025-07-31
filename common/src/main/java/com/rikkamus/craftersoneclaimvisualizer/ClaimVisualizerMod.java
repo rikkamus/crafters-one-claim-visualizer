@@ -19,9 +19,11 @@ import net.minecraft.commands.Commands;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 import org.slf4j.Logger;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
@@ -91,7 +93,18 @@ public final class ClaimVisualizerMod {
         if (!isRenderingClaims()) return;
 
         Profiler.get().push("claim_boundaries");
-        this.claimManager.renderClaimBoundaries(context);
+
+        Vector3f defaultRgb = this.config.getDefaultClaimBoundaryRgb();
+
+        this.claimManager.renderClaimBoundaries(
+            context,
+            this.config.getClaimBoundaryMinY(),
+            this.config.getClaimBoundaryMaxY(),
+            claim -> this.config.isDefaultBoundaryColorForced() ? defaultRgb : Objects.requireNonNullElse(claim.getRgb(), defaultRgb),
+            this.config.getClaimBoundaryFillOpacity(),
+            this.config.getClaimBoundaryOutlineOpacity()
+        );
+
         Profiler.get().pop();
     }
 
