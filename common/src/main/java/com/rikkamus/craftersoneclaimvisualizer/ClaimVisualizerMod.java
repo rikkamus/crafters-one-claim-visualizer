@@ -133,20 +133,17 @@ public final class ClaimVisualizerMod {
         Profiler.get().pop();
     }
 
-    public int showClaims() {
+    public void showClaims() {
         if (this.claimManager == null) loadClaims();
         this.showClaims = true;
-        return Command.SINGLE_SUCCESS;
     }
 
-    public int hideClaims() {
+    public void hideClaims() {
         this.showClaims = false;
-        return Command.SINGLE_SUCCESS;
     }
 
-    public int refreshClaims() {
+    public void refreshClaims() {
         loadClaims();
-        return Command.SINGLE_SUCCESS;
     }
 
     private boolean isRenderingClaims() {
