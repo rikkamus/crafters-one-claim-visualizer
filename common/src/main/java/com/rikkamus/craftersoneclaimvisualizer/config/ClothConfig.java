@@ -7,6 +7,7 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
+import net.minecraft.world.InteractionResult;
 import org.joml.Vector3f;
 
 import java.net.URI;
@@ -85,18 +86,31 @@ public class ClothConfig implements ClaimVisualizerConfig, ConfigData {
 
     @Override
     public void validatePostLoad() {
+        validate();
+    }
+
+    public InteractionResult validate() {
         if (this.claimBoundaryMinY > this.claimBoundaryMaxY) {
+            ClaimVisualizerMod.LOGGER.warn("Claim boundary min Y is greater than max Y, correcting...");
             int temp = this.claimBoundaryMinY;
             this.claimBoundaryMinY = this.claimBoundaryMaxY;
             this.claimBoundaryMaxY = temp;
         }
 
-        this.claimBoundaryFillOpacity = Math.clamp(this.claimBoundaryFillOpacity, 0, 100);
-        this.claimBoundaryOutlineOpacity = Math.clamp(this.claimBoundaryOutlineOpacity, 0, 100);
+        this.claimBoundaryFillOpacity = clampInt(this.claimBoundaryFillOpacity, 0, 100, "Invalid claim boundary fill opacity, correcting...");
+        this.claimBoundaryOutlineOpacity = clampInt(this.claimBoundaryOutlineOpacity, 0, 100, "Invalid claim boundary outline opacity, correcting...");
 
-        if (this.overlayHorizontalAlignment == null) this.overlayHorizontalAlignment = DefaultConfig.DEFAULT_OVERLAY_HORIZONTAL_ALIGNMENT;
-        if (this.overlayVerticalAlignment == null) this.overlayVerticalAlignment = DefaultConfig.DEFAULT_OVERLAY_VERTICAL_ALIGNMENT;
-        this.apiRequestTimeoutMillis = Math.clamp(this.apiRequestTimeoutMillis, 100, 60000);
+        if (this.overlayHorizontalAlignment == null) {
+            ClaimVisualizerMod.LOGGER.warn("Invalid overlay horizontal alignment, correcting...");
+            this.overlayHorizontalAlignment = DefaultConfig.DEFAULT_OVERLAY_HORIZONTAL_ALIGNMENT;
+        }
+
+        if (this.overlayVerticalAlignment == null) {
+            ClaimVisualizerMod.LOGGER.warn("Invalid overlay vertical alignment, correcting...");
+            this.overlayVerticalAlignment = DefaultConfig.DEFAULT_OVERLAY_VERTICAL_ALIGNMENT;
+        }
+
+        this.apiRequestTimeoutMillis = clampLong(this.apiRequestTimeoutMillis, 100, 60000, "Invalid API request timeout, correcting...");
 
         boolean uriValid = true;
 
@@ -108,19 +122,35 @@ public class ClothConfig implements ClaimVisualizerConfig, ConfigData {
         }
 
         if (!uriValid) {
+            ClaimVisualizerMod.LOGGER.warn("Invalid custom API endpoint URI, correcting...");
             this.overrideApiEndpoint = false;
             this.customApiEndpointUri = "https://example.com";
         }
+
+        return InteractionResult.SUCCESS;
+    }
+
+    private int clampInt(int value, int min, int max, String warningMessage) {
+        return (int) clampLong(value, min, max, warningMessage);
+    }
+
+    private long clampLong(long value, long min, long max, String warningMessage) {
+        if (value < min || value > max) {
+            ClaimVisualizerMod.LOGGER.warn(warningMessage);
+            return Math.clamp(value, min, max);
+        }
+
+        return value;
     }
 
     @Override
     public int getClaimBoundaryMinY() {
-        return Math.min(this.claimBoundaryMinY, this.claimBoundaryMaxY);
+        return this.claimBoundaryMinY;
     }
 
     @Override
     public int getClaimBoundaryMaxY() {
-        return Math.max(this.claimBoundaryMinY, this.claimBoundaryMaxY);
+        return this.claimBoundaryMaxY;
     }
 
     @Override
@@ -130,12 +160,12 @@ public class ClothConfig implements ClaimVisualizerConfig, ConfigData {
 
     @Override
     public float getClaimBoundaryFillOpacity() {
-        return Math.clamp(this.claimBoundaryFillOpacity, 0, 100) / 100f;
+        return this.claimBoundaryFillOpacity / 100f;
     }
 
     @Override
     public float getClaimBoundaryOutlineOpacity() {
-        return Math.clamp(this.claimBoundaryOutlineOpacity, 0, 100) / 100f;
+        return this.claimBoundaryOutlineOpacity / 100f;
     }
 
     @Override

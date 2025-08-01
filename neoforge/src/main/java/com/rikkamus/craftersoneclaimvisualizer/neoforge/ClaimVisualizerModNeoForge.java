@@ -8,6 +8,7 @@ import com.rikkamus.craftersoneclaimvisualizer.config.ClothConfig;
 import com.rikkamus.craftersoneclaimvisualizer.config.DefaultConfig;
 import com.rikkamus.craftersoneclaimvisualizer.render.RenderContext;
 import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import me.shedaniel.clothconfig2.ClothConfigInitializer;
 import net.minecraft.client.Camera;
@@ -40,7 +41,10 @@ public class ClaimVisualizerModNeoForge {
         ClaimVisualizerConfig config;
 
         if (ModList.get().isLoaded(ClothConfigInitializer.MOD_ID)) {
-            config = AutoConfig.register(ClothConfig.class, JanksonConfigSerializer::new).getConfig();
+            ConfigHolder<ClothConfig> holder = AutoConfig.register(ClothConfig.class, JanksonConfigSerializer::new);
+            holder.registerSaveListener((configHolder, clothConfig) -> clothConfig.validate());
+            config = holder.getConfig();
+
             event.getContainer().registerExtensionPoint(
                 IConfigScreenFactory.class,
                 (modContainer, parent) -> AutoConfig.getConfigScreen(ClothConfig.class, parent).get()

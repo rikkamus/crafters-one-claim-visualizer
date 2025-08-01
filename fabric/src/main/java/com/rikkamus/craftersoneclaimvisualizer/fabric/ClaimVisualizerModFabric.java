@@ -8,6 +8,7 @@ import com.rikkamus.craftersoneclaimvisualizer.config.ClothConfig;
 import com.rikkamus.craftersoneclaimvisualizer.config.DefaultConfig;
 import com.rikkamus.craftersoneclaimvisualizer.render.RenderContext;
 import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -31,7 +32,9 @@ public final class ClaimVisualizerModFabric implements ClientModInitializer {
         ClaimVisualizerConfig config;
 
         if (FabricLoader.getInstance().isModLoaded("cloth-config")) {
-            config = AutoConfig.register(ClothConfig.class, JanksonConfigSerializer::new).getConfig();
+            ConfigHolder<ClothConfig> holder = AutoConfig.register(ClothConfig.class, JanksonConfigSerializer::new);
+            holder.registerSaveListener((configHolder, clothConfig) -> clothConfig.validate());
+            config = holder.getConfig();
         } else {
             config = new DefaultConfig();
         }

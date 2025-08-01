@@ -27,8 +27,7 @@ import java.util.concurrent.CompletionException;
 public final class ClaimVisualizerMod {
 
     public static final String MOD_ID = "craftersoneclaimvisualizer";
-
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     private final ClaimVisualizerConfig config;
 
