@@ -5,6 +5,7 @@
   "text.autoconfig.craftersoneclaimvisualizer.category.claiminfooverlay": "Claim Info Overlay",
   "text.autoconfig.craftersoneclaimvisualizer.category.advanced": "Advanced",
 
+  "text.autoconfig.craftersoneclaimvisualizer.option.claimBoundaryCorrectionEnabled": "Enable Claim Boundary Correction",
   "text.autoconfig.craftersoneclaimvisualizer.option.claimBoundaryMinY": "Minimum Y-Level",
   "text.autoconfig.craftersoneclaimvisualizer.option.claimBoundaryMaxY": "Maximum Y-Level",
   "text.autoconfig.craftersoneclaimvisualizer.option.defaultClaimBoundaryColor": "Default Color",

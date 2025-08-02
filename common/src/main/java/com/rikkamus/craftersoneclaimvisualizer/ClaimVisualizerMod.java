@@ -1,6 +1,5 @@
 package com.rikkamus.craftersoneclaimvisualizer;
 
-import com.mojang.brigadier.Command;
 import com.mojang.logging.LogUtils;
 import com.rikkamus.craftersoneclaimvisualizer.claim.Claim;
 import com.rikkamus.craftersoneclaimvisualizer.claim.ClaimRepository;
@@ -101,7 +100,8 @@ public final class ClaimVisualizerMod {
             this.config.getClaimBoundaryMaxY(),
             claim -> this.config.isDefaultBoundaryColorForced() ? defaultRgb : Objects.requireNonNullElse(claim.getRgb(), defaultRgb),
             this.config.getClaimBoundaryFillOpacity(),
-            this.config.getClaimBoundaryOutlineOpacity()
+            this.config.getClaimBoundaryOutlineOpacity(),
+            this.config.isClaimBoundaryCorrectionEnabled()
         );
 
         Profiler.get().pop();
@@ -121,7 +121,7 @@ public final class ClaimVisualizerMod {
         if (y < 0) y += guiGraphics.guiHeight();
 
         ClaimInfoOverlayRenderer.renderClaimOverlay(
-            this.claimManager.getClaimAt(playerPos.x, playerPos.z).orElse(null),
+            this.claimManager.getClaimAt(playerPos.x, playerPos.z, this.config.isClaimBoundaryCorrectionEnabled()).orElse(null),
             x,
             y,
             this.config.getOverlayHorizontalAlignment(),

@@ -8,6 +8,8 @@ import java.time.Duration;
 
 public interface ClaimVisualizerConfig {
 
+    boolean isClaimBoundaryCorrectionEnabled();
+
     int getClaimBoundaryMinY();
 
     int getClaimBoundaryMaxY();

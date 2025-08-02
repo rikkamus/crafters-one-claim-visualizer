@@ -17,6 +17,12 @@ import java.time.Duration;
 public class ClothConfig implements ClaimVisualizerConfig, ConfigData {
 
     @ConfigEntry.Category("claimboundaries")
+    @Comment("""
+        Enables boundary correction to ensure that all claim-defining blocks are fully contained within the boundary.
+        May cause some claims to overlap.""")
+    private boolean claimBoundaryCorrectionEnabled = DefaultConfig.DEFAULT_BOUNDARY_CORRECTION_ENABLED;
+
+    @ConfigEntry.Category("claimboundaries")
     @Comment("The lowest altitude at which claim boundaries should be rendered.")
     private int claimBoundaryMinY = DefaultConfig.DEFAULT_BOUNDARY_MIN_Y;
 
@@ -141,6 +147,11 @@ public class ClothConfig implements ClaimVisualizerConfig, ConfigData {
         }
 
         return value;
+    }
+
+    @Override
+    public boolean isClaimBoundaryCorrectionEnabled() {
+        return this.claimBoundaryCorrectionEnabled;
     }
 
     @Override

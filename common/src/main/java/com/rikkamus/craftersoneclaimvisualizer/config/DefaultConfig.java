@@ -9,6 +9,7 @@ import java.time.Duration;
 
 public class DefaultConfig implements ClaimVisualizerConfig {
 
+    public static final boolean DEFAULT_BOUNDARY_CORRECTION_ENABLED = true;
     public static final int DEFAULT_BOUNDARY_MIN_Y = -64;
     public static final int DEFAULT_BOUNDARY_MAX_Y = 100;
     public static final int DEFAULT_BOUNDARY_COLOR = 0x0015E685;
@@ -21,6 +22,11 @@ public class DefaultConfig implements ClaimVisualizerConfig {
     public static final Alignment DEFAULT_OVERLAY_VERTICAL_ALIGNMENT = Alignment.START;
     public static final Duration DEFAULT_REQUEST_TIMEOUT = Duration.ofSeconds(5);
     public static final URI DEFAULT_API_ENDPOINT_URI = URI.create("https://figbash.com/claims/data/claims.json");
+
+    @Override
+    public boolean isClaimBoundaryCorrectionEnabled() {
+        return DefaultConfig.DEFAULT_BOUNDARY_CORRECTION_ENABLED;
+    }
 
     @Override
     public int getClaimBoundaryMinY() {
