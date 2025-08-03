@@ -48,3 +48,14 @@ jobs:
           path: dist/*
           if-no-files-found: error
           retention-days: 7
+
+      - name: Upload test results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults
+          path: |
+            common/build/test-results/**/*.xml
+            neoforge/build/test-results/**/*.xml
+            fabric/build/test-results/**/*.xml
+          if-no-files-found: warn
