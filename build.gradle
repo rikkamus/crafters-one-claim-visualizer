@@ -41,11 +41,14 @@ subprojects {
     }
 
     dependencies {
-        compileOnly("org.projectlombok:lombok:1.18.38")
-        annotationProcessor("org.projectlombok:lombok:1.18.38")
+        compileOnly("org.projectlombok:lombok:$rootProject.lombok_version")
+        annotationProcessor("org.projectlombok:lombok:$rootProject.lombok_version")
 
-        testCompileOnly("org.projectlombok:lombok:1.18.38")
-        testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
+        testCompileOnly("org.projectlombok:lombok:$rootProject.lombok_version")
+        testAnnotationProcessor("org.projectlombok:lombok:$rootProject.lombok_version")
+
+        testImplementation "org.junit.jupiter:junit-jupiter:$rootProject.junit_version"
+        testRuntimeOnly "org.junit.platform:junit-platform-launcher:$rootProject.junit_launcher_version"
 
         minecraft "net.minecraft:minecraft:$rootProject.minecraft_version"
         mappings loom.officialMojangMappings()
@@ -63,6 +66,10 @@ subprojects {
 
     tasks.withType(JavaCompile).configureEach {
         it.options.release = 21
+    }
+
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
     }
 
 }
