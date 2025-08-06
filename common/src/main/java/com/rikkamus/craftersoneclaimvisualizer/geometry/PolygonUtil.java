@@ -40,8 +40,8 @@ public class PolygonUtil {
         while (iterator.hasNext()) {
             Vector2i blockPos = iterator.next();
 
-            Vector2i prevHeading = Vector2iUtil.directionTo(iterator.peekPreviousSibling(), blockPos);
-            Vector2i nextHeading = Vector2iUtil.directionTo(blockPos, iterator.peekNextSibling());
+            Vector2i prevHeading = Vector2iUtil.directionTo(iterator.peekPreviousNeighbor(), blockPos);
+            Vector2i nextHeading = Vector2iUtil.directionTo(blockPos, iterator.peekNextNeighbor());
 
             Direction directionToSource = Direction.of(prevHeading.negate(new Vector2i()));
             Direction relativeDirection = Direction.relative(prevHeading, nextHeading);
@@ -84,10 +84,10 @@ public class PolygonUtil {
         while (iterator.hasNext()) {
             Vector2i point = iterator.next();
 
-            Vector2i prevSibling = filteredPoints.isEmpty() ? points.getLast() : filteredPoints.getLast();
-            Vector2i nextSibling = iterator.hasNext() ? iterator.peekNextSibling() : filteredPoints.isEmpty() ? point : filteredPoints.getFirst();
+            Vector2i prevNeighbor = filteredPoints.isEmpty() ? points.getLast() : filteredPoints.getLast();
+            Vector2i nextNeighbor = iterator.hasNext() ? iterator.peekNextNeighbor() : filteredPoints.isEmpty() ? point : filteredPoints.getFirst();
 
-            if ((filteredPoints.isEmpty() && !iterator.hasNext()) || (!points.equals(prevSibling) && !point.equals(nextSibling))) filteredPoints.add(point);
+            if ((filteredPoints.isEmpty() && !iterator.hasNext()) || (!points.equals(prevNeighbor) && !point.equals(nextNeighbor))) filteredPoints.add(point);
         }
 
         return filteredPoints;
@@ -101,11 +101,11 @@ public class PolygonUtil {
             Vector2i point = iterator.next();
 
             if (!filteredPoints.isEmpty() || iterator.hasNext()) {
-                Vector2i prevSibling = filteredPoints.isEmpty() ? points.getLast() : filteredPoints.getLast();
-                Vector2i nextSibling = iterator.hasNext() ? iterator.peekNextSibling() : filteredPoints.isEmpty() ? point : filteredPoints.getFirst();
+                Vector2i prevNeighbor = filteredPoints.isEmpty() ? points.getLast() : filteredPoints.getLast();
+                Vector2i nextNeighbor = iterator.hasNext() ? iterator.peekNextNeighbor() : filteredPoints.isEmpty() ? point : filteredPoints.getFirst();
 
                 // Exclude zero-length edges and points that are collinear with and between their neighbors
-                if (Vector2iUtil.isPointOnEdgeBetween(point, prevSibling, nextSibling, true)) continue;
+                if (Vector2iUtil.isPointOnEdgeBetween(point, prevNeighbor, nextNeighbor, true)) continue;
             }
 
             filteredPoints.add(point);
@@ -122,7 +122,7 @@ public class PolygonUtil {
 
         while (iterator.hasNext()) {
             Vector2i a = iterator.next();
-            Vector2i b = iterator.peekNextSibling();
+            Vector2i b = iterator.peekNextNeighbor();
             sum += (((long) b.x) - ((long) a.x)) * (((long) b.y) + ((long) a.y));
         }
 

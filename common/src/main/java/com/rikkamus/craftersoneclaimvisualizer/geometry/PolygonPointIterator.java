@@ -30,7 +30,7 @@ class PolygonPointIterator<T> implements Iterator<T> {
         return this.current;
     }
 
-    public T peekNextSibling() {
+    public T peekNextNeighbor() {
         if (this.current == null) throw new IllegalArgumentException("Cannot peek before iterating.");
 
         if (this.next != null) return this.next;
@@ -43,7 +43,7 @@ class PolygonPointIterator<T> implements Iterator<T> {
         }
     }
 
-    public T peekPreviousSibling() {
+    public T peekPreviousNeighbor() {
         if (this.current == null) throw new IllegalArgumentException("Cannot peek before iterating.");
         return this.previous != null ? this.previous : this.points.getLast();
     }
