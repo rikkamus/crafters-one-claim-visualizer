@@ -29,7 +29,7 @@
     "fabric-api": "*"
   },
   "suggests": {
-    "cloth_config": ">=19.0.147",
+    "cloth-config": ">=19.0.147",
     "modmenu": "*"
   }
 }

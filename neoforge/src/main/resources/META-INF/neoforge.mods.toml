@@ -19,18 +19,18 @@ modId = "neoforge"
 type = "required"
 versionRange = "[21.7,)"
 ordering = "NONE"
-side = "BOTH"
+side = "CLIENT"
 
 [[dependencies.craftersoneclaimvisualizer]]
 modId = "minecraft"
 type = "required"
 versionRange = "[1.21.7,)"
 ordering = "NONE"
-side = "BOTH"
+side = "CLIENT"
 
 [[dependencies.craftersoneclaimvisualizer]]
 modId="cloth_config"
 type = "optional"
 versionRange="[19.0.147,)"
 ordering="AFTER"
-side="BOTH"
+side="CLIENT"
