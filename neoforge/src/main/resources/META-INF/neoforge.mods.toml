@@ -12,7 +12,7 @@ authors = "rikkamus"
 description = '''
 Allows viewing claimed land in-game.
 '''
-#logoFile = ""
+logoFile = "icon.png"
 
 [[dependencies.craftersoneclaimvisualizer]]
 modId = "neoforge"

@@ -12,6 +12,7 @@
     "sources": "https://github.com/rikkamus/crafters-one-claim-visualizer"
   },
   "license": "MIT",
+  "icon": "icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [
