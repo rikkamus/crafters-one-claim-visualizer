@@ -1,4 +1,7 @@
 # Crafters.one Claim Visualizer
+[![Modrinth: Crafters.one Claim Visualizer](https://img.shields.io/badge/Modrinth-Crafters.one_Claim_Visualizer-00af5c?logo=modrinth)](https://modrinth.com/mod/crafters-one-claim-visualizer)
+[![MIT License](https://img.shields.io/badge/License-MIT-blue)](https://github.com/rikkamus/crafters-one-claim-visualizer/blob/-/LICENSE)
+
 A client-side mod for the [Crafters.one](https://crafters.one/) Minecraft server that renders land claim boundaries in-game.
 
 ## Usage
