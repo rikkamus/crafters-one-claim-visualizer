@@ -13,6 +13,7 @@ description = '''
 Allows viewing claimed land in-game.
 '''
 logoFile = "icon.png"
+updateJSONURL = "https://api.modrinth.com/updates/5pb70zvL/forge_updates.json?neoforge=only"
 
 [[dependencies.craftersoneclaimvisualizer]]
 modId = "neoforge"
