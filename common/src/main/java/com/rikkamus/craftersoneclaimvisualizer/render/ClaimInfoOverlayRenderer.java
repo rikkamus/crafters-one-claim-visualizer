@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ClaimInfoOverlayRenderer {
 
-    public static void renderClaimOverlay(Claim claim, int x, int y, Alignment horizontalAlignemnt, Alignment verticalAlignment, GuiGraphics guiGraphics) {
+    public static void renderClaimOverlay(Claim claim, int x, int y, Alignment horizontalAlignment, Alignment verticalAlignment, GuiGraphics guiGraphics) {
         Font font = Minecraft.getInstance().font;
         final int lineHeight = font.lineHeight;
 
@@ -32,7 +32,7 @@ public class ClaimInfoOverlayRenderer {
         y = verticalAlignment.translate(y, lines.size() * lineHeight);
 
         for (Component line : lines) {
-            guiGraphics.drawString(font, line, horizontalAlignemnt.translate(x, font.width(line.getString())), y, 0xFFFFFFFF);
+            guiGraphics.drawString(font, line, horizontalAlignment.translate(x, font.width(line.getString())), y, 0xFFFFFFFF);
             y += font.lineHeight;
         }
     }

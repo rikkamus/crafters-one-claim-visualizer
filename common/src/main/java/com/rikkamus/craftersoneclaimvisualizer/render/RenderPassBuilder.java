@@ -57,7 +57,6 @@ public class RenderPassBuilder {
             if (meshData == null) return;
 
             try (
-
                 RenderPass renderPass = createRenderPass(name, renderTarget);
                 GpuBuffer vertexBuffer = RenderSystem.getDevice().createBuffer(() -> name, GpuBuffer.USAGE_VERTEX, meshData.vertexBuffer())
             ) {
