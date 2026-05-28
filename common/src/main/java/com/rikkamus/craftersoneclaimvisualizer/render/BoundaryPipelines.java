@@ -25,8 +25,8 @@ public class BoundaryPipelines {
 
         BOUNDARY_FILL_PIPELINE = RenderPipeline.builder(BoundaryPipelines.BOUNDARY_SNIPPET)
                                                .withLocation(Identifier.fromNamespaceAndPath(ClaimVisualizerMod.MOD_ID, "pipeline/boundary_fill"))
-                                               .withVertexShader("core/position_color")
-                                               .withFragmentShader("core/position_color")
+                                               .withVertexShader(Identifier.fromNamespaceAndPath(ClaimVisualizerMod.MOD_ID, "core/boundary"))
+                                               .withFragmentShader(Identifier.fromNamespaceAndPath(ClaimVisualizerMod.MOD_ID, "core/boundary"))
                                                .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLES)
                                                .withCull(false)
                                                .withBlend(BlendFunction.TRANSLUCENT)
@@ -37,8 +37,8 @@ public class BoundaryPipelines {
 
         BOUNDARY_OUTLINE_PIPELINE = RenderPipeline.builder(BoundaryPipelines.BOUNDARY_SNIPPET)
                                                   .withLocation(Identifier.fromNamespaceAndPath(ClaimVisualizerMod.MOD_ID, "pipeline/boundary_outline"))
-                                                  .withVertexShader("core/position_color")
-                                                  .withFragmentShader("core/position_color")
+                                                  .withVertexShader(Identifier.fromNamespaceAndPath(ClaimVisualizerMod.MOD_ID, "core/boundary"))
+                                                  .withFragmentShader(Identifier.fromNamespaceAndPath(ClaimVisualizerMod.MOD_ID, "core/boundary"))
                                                   .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.DEBUG_LINES)
                                                   .withCull(false)
                                                   .withBlend(BlendFunction.TRANSLUCENT)
