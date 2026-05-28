@@ -14,7 +14,7 @@ public class BoundaryRenderer {
 
     public static void renderBoundaries(RenderContext context, Iterable<Boundary> boundaries) {
         GpuBufferSlice dynamicTransforms = RenderSystem.getDynamicUniforms().writeTransform(
-            context.transform(),
+            context.viewMatrix(),
             new Vector4f(1f, 1f, 1f, 1f),
             new Vector3f(),
             new Matrix4f()
@@ -22,9 +22,9 @@ public class BoundaryRenderer {
 
         RenderPassBuilder.withPipeline(BoundaryPipelines.BOUNDARY_FILL_PIPELINE)
             .withVertices(vertexConsumer -> {
-                QuadRenderer renderer = new CameraAwareQuadRenderer(context.cameraPos(), (bottomLeft, bottomRight, topRight, topLeft, rgba) -> {
+                QuadRenderer renderer = (bottomLeft, bottomRight, topRight, topLeft, rgba) -> {
                     renderQuadTriangles(vertexConsumer, bottomLeft, bottomRight, topRight, topLeft, rgba);
-                });
+                };
 
                 boundaries.forEach(boundary -> renderVerticalPrism(boundary.getBase(), boundary.getY1(), boundary.getY2(), boundary.getFillRgba(), renderer));
             })
@@ -34,9 +34,9 @@ public class BoundaryRenderer {
 
         RenderPassBuilder.withPipeline(BoundaryPipelines.BOUNDARY_OUTLINE_PIPELINE)
             .withVertices(vertexConsumer -> {
-                QuadRenderer renderer = new CameraAwareQuadRenderer(context.cameraPos(), (bottomLeft, bottomRight, topRight, topLeft, rgba) -> {
+                QuadRenderer renderer = (bottomLeft, bottomRight, topRight, topLeft, rgba) -> {
                     renderQuadOutline(vertexConsumer, bottomLeft, bottomRight, topRight, topLeft, rgba);
-                });
+                };
 
                 boundaries.forEach(boundary -> renderVerticalPrism(boundary.getBase(), boundary.getY1(), boundary.getY2(), boundary.getOutlineRgba(), renderer));
             })

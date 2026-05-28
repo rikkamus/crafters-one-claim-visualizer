@@ -26,6 +26,7 @@ import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.joml.Matrix4f;
 
 @Mod(value = ClaimVisualizerMod.MOD_ID, dist = Dist.CLIENT)
 public class ClaimVisualizerModNeoForge {
@@ -52,7 +53,13 @@ public class ClaimVisualizerModNeoForge {
     @SubscribeEvent
     private void onLevelRendered(RenderLevelStageEvent.AfterLevel event) {
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        RenderContext context = new RenderContext(ClaimVisualizerMod.MOD_ID, event.getModelViewMatrix(), camera.position().toVector3f());
+
+        Matrix4f viewMatrix = new Matrix4f();
+        viewMatrix.rotation(camera.rotation());
+        viewMatrix.invert();
+        viewMatrix.translate(camera.position().reverse().toVector3f());
+
+        RenderContext context = new RenderContext(ClaimVisualizerMod.MOD_ID, viewMatrix);
         this.mod.renderClaimBoundaries(context);
     }
 

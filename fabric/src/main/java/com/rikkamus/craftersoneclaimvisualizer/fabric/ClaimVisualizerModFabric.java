@@ -49,11 +49,12 @@ public final class ClaimVisualizerModFabric implements ClientModInitializer {
         WorldRenderEvents.END_MAIN.register(worldContext -> {
             Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
 
-            Matrix4f cameraRotationMatrix = new Matrix4f();
-            cameraRotationMatrix.rotation(camera.rotation());
-            cameraRotationMatrix.invert();
+            Matrix4f viewMatrix = new Matrix4f();
+            viewMatrix.rotation(camera.rotation());
+            viewMatrix.invert();
+            viewMatrix.translate(camera.position().reverse().toVector3f());
 
-            RenderContext context = new RenderContext(ClaimVisualizerMod.MOD_ID, cameraRotationMatrix, camera.position().toVector3f());
+            RenderContext context = new RenderContext(ClaimVisualizerMod.MOD_ID, viewMatrix);
             this.mod.renderClaimBoundaries(context);
         });
 
