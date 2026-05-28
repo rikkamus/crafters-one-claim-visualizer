@@ -2,8 +2,11 @@ package com.rikkamus.craftersoneclaimvisualizer.claim;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.net.*;
-import java.net.http.*;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpTimeoutException;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;

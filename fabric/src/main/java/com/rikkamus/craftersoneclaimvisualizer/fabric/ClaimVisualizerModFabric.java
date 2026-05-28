@@ -1,6 +1,5 @@
 package com.rikkamus.craftersoneclaimvisualizer.fabric;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.rikkamus.craftersoneclaimvisualizer.ClaimVisualizerMod;
