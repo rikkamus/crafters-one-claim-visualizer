@@ -38,20 +38,7 @@ public class ClaimVisualizerModNeoForge {
     }
 
     public void onClientSetup(FMLClientSetupEvent event) {
-        ClaimVisualizerConfig config;
-
-        if (ModList.get().isLoaded(ClothConfigInitializer.MOD_ID)) {
-            ConfigHolder<ClothConfig> holder = AutoConfig.register(ClothConfig.class, JanksonConfigSerializer::new);
-            holder.registerSaveListener((configHolder, clothConfig) -> clothConfig.validate());
-            config = holder.getConfig();
-
-            event.getContainer().registerExtensionPoint(
-                IConfigScreenFactory.class,
-                (modContainer, parent) -> AutoConfig.getConfigScreen(ClothConfig.class, parent).get()
-            );
-        } else {
-            config = new DefaultConfig();
-        }
+        ClaimVisualizerConfig config = ConfigBuilder.buildConfig(event.getContainer());
 
         ArtifactVersion version = event.getContainer().getModInfo().getVersion();
         this.mod = new ClaimVisualizerMod(config, version.toString());
@@ -65,7 +52,7 @@ public class ClaimVisualizerModNeoForge {
     @SubscribeEvent
     private void onLevelRendered(RenderLevelStageEvent.AfterLevel event) {
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        RenderContext context = new RenderContext(ClaimVisualizerMod.MOD_ID, event.getPoseStack().last(), camera.position().toVector3f(), event.getModelViewMatrix());
+        RenderContext context = new RenderContext(ClaimVisualizerMod.MOD_ID, event.getModelViewMatrix(), camera.position().toVector3f());
         this.mod.renderClaimBoundaries(context);
     }
 

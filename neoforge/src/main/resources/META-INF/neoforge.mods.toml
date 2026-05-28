@@ -18,20 +18,20 @@ updateJSONURL = "https://api.modrinth.com/updates/5pb70zvL/forge_updates.json?ne
 [[dependencies.craftersoneclaimvisualizer]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.7,)"
+versionRange = "[21.11,)"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.craftersoneclaimvisualizer]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.7,)"
+versionRange = "[1.21.11,)"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.craftersoneclaimvisualizer]]
 modId="cloth_config"
 type = "optional"
-versionRange="[19.0.147,)"
+versionRange="[21.11.150,)"
 ordering="AFTER"
 side="CLIENT"

@@ -1,7 +1,6 @@
 package com.rikkamus.craftersoneclaimvisualizer.claim;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.HttpHeaders;
 
 import java.net.*;
 import java.net.http.*;
@@ -36,8 +35,8 @@ public class ClaimRepository implements AutoCloseable {
 
     public CompletableFuture<Collection<Claim>> findAllClaims() {
         HttpRequest request = HttpRequest.newBuilder(this.endpointUri)
-                                         .setHeader(HttpHeaders.ACCEPT, "application/json")
-                                         .setHeader(HttpHeaders.USER_AGENT, this.userAgent)
+                                         .setHeader("Accept", "application/json")
+                                         .setHeader("User-Agent", this.userAgent)
                                          .timeout(this.timeout)
                                          .build();
 

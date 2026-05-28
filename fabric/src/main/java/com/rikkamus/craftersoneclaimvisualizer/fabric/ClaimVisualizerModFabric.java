@@ -1,5 +1,6 @@
 package com.rikkamus.craftersoneclaimvisualizer.fabric;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.rikkamus.craftersoneclaimvisualizer.ClaimVisualizerMod;
@@ -15,13 +16,14 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.Version;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import org.joml.Matrix4f;
 
 public final class ClaimVisualizerModFabric implements ClientModInitializer {
 
@@ -44,14 +46,19 @@ public final class ClaimVisualizerModFabric implements ClientModInitializer {
 
         ClientTickEvents.START_CLIENT_TICK.register(client -> this.mod.tick());
 
-        WorldRenderEvents.END.register(worldContext -> {
+        WorldRenderEvents.END_MAIN.register(worldContext -> {
             Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-            RenderContext context = new RenderContext(ClaimVisualizerMod.MOD_ID, worldContext.matrixStack().last(), camera.position().toVector3f(), worldContext.positionMatrix());
+
+            Matrix4f cameraRotationMatrix = new Matrix4f();
+            cameraRotationMatrix.rotation(camera.rotation());
+            cameraRotationMatrix.invert();
+
+            RenderContext context = new RenderContext(ClaimVisualizerMod.MOD_ID, cameraRotationMatrix, camera.position().toVector3f());
             this.mod.renderClaimBoundaries(context);
         });
 
         HudElementRegistry.addLast(
-            ResourceLocation.fromNamespaceAndPath(ClaimVisualizerMod.MOD_ID, "hud/claim_info_overlay"),
+            Identifier.fromNamespaceAndPath(ClaimVisualizerMod.MOD_ID, "hud/claim_info_overlay"),
             (context, tickCounter) -> this.mod.renderClaimInfoOverlay(context)
         );
 

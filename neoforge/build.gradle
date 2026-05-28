@@ -32,6 +32,10 @@ repositories {
 }
 
 dependencies {
+    include "com.fasterxml.jackson.core:jackson-core:$rootProject.jackson_version"
+    include "com.fasterxml.jackson.core:jackson-annotations:$rootProject.jackson_annotations_version"
+    include "com.fasterxml.jackson.core:jackson-databind:$rootProject.jackson_version"
+
     neoForge "net.neoforged:neoforge:$rootProject.neoforge_version"
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }

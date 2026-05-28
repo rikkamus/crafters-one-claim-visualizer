@@ -8,7 +8,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.rikkamus.craftersoneclaimvisualizer.ClaimVisualizerMod;
 import lombok.experimental.UtilityClass;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 @UtilityClass
 public class BoundaryPipelines {
@@ -24,7 +24,7 @@ public class BoundaryPipelines {
                                          .buildSnippet();
 
         BOUNDARY_FILL_PIPELINE = RenderPipeline.builder(BoundaryPipelines.BOUNDARY_SNIPPET)
-                                               .withLocation(ResourceLocation.fromNamespaceAndPath(ClaimVisualizerMod.MOD_ID, "pipeline/boundary_fill"))
+                                               .withLocation(Identifier.fromNamespaceAndPath(ClaimVisualizerMod.MOD_ID, "pipeline/boundary_fill"))
                                                .withVertexShader("core/position_color")
                                                .withFragmentShader("core/position_color")
                                                .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLES)
@@ -36,7 +36,7 @@ public class BoundaryPipelines {
                                                .build();
 
         BOUNDARY_OUTLINE_PIPELINE = RenderPipeline.builder(BoundaryPipelines.BOUNDARY_SNIPPET)
-                                                  .withLocation(ResourceLocation.fromNamespaceAndPath(ClaimVisualizerMod.MOD_ID, "pipeline/boundary_outline"))
+                                                  .withLocation(Identifier.fromNamespaceAndPath(ClaimVisualizerMod.MOD_ID, "pipeline/boundary_outline"))
                                                   .withVertexShader("core/position_color")
                                                   .withFragmentShader("core/position_color")
                                                   .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.DEBUG_LINES)
