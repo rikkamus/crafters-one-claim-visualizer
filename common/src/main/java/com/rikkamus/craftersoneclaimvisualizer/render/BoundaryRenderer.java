@@ -85,19 +85,17 @@ public class BoundaryRenderer {
     }
 
     private static void renderQuadOutline(VertexConsumer consumer, Vector3f bottomLeft, Vector3f bottomRight, Vector3f topRight, Vector3f topLeft, Vector4f rgba) {
-        Vector3f quadNormal = bottomLeft.sub(bottomRight, new Vector3f()).cross(topRight.sub(bottomRight, new Vector3f()));
+        consumer.addVertex(bottomLeft.x, bottomLeft.y, bottomLeft.z).setColor(rgba.x, rgba.y, rgba.z, rgba.w);
+        consumer.addVertex(bottomRight.x, bottomRight.y, bottomRight.z).setColor(rgba.x, rgba.y, rgba.z, rgba.w);
 
-        consumer.addVertex(bottomLeft.x, bottomLeft.y, bottomLeft.z).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setNormal(quadNormal.x, quadNormal.y, quadNormal.z);
-        consumer.addVertex(bottomRight.x, bottomRight.y, bottomRight.z).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setNormal(quadNormal.x, quadNormal.y, quadNormal.z);
+        consumer.addVertex(bottomRight.x, bottomRight.y, bottomRight.z).setColor(rgba.x, rgba.y, rgba.z, rgba.w);
+        consumer.addVertex(topRight.x, topRight.y, topRight.z).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setColor(rgba.x, rgba.y, rgba.z, rgba.w);
 
-        consumer.addVertex(bottomRight.x, bottomRight.y, bottomRight.z).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setNormal(quadNormal.x, quadNormal.y, quadNormal.z);
-        consumer.addVertex(topRight.x, topRight.y, topRight.z).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setNormal(quadNormal.x, quadNormal.y, quadNormal.z);
+        consumer.addVertex(topRight.x, topRight.y, topRight.z).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setColor(rgba.x, rgba.y, rgba.z, rgba.w);
+        consumer.addVertex(topLeft.x, topLeft.y, topLeft.z).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setColor(rgba.x, rgba.y, rgba.z, rgba.w);
 
-        consumer.addVertex(topRight.x, topRight.y, topRight.z).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setNormal(quadNormal.x, quadNormal.y, quadNormal.z);
-        consumer.addVertex(topLeft.x, topLeft.y, topLeft.z).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setNormal(quadNormal.x, quadNormal.y, quadNormal.z);
-
-        consumer.addVertex(topLeft.x, topLeft.y, topLeft.z).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setNormal(quadNormal.x, quadNormal.y, quadNormal.z);
-        consumer.addVertex(bottomLeft.x, bottomLeft.y, bottomLeft.z).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setNormal(quadNormal.x, quadNormal.y, quadNormal.z);
+        consumer.addVertex(topLeft.x, topLeft.y, topLeft.z).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setColor(rgba.x, rgba.y, rgba.z, rgba.w);
+        consumer.addVertex(bottomLeft.x, bottomLeft.y, bottomLeft.z).setColor(rgba.x, rgba.y, rgba.z, rgba.w).setColor(rgba.x, rgba.y, rgba.z, rgba.w);
     }
 
 }
