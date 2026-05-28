@@ -21,7 +21,7 @@ public class DefaultConfig implements ClaimVisualizerConfig {
     public static final Alignment DEFAULT_OVERLAY_HORIZONTAL_ALIGNMENT = Alignment.START;
     public static final Alignment DEFAULT_OVERLAY_VERTICAL_ALIGNMENT = Alignment.START;
     public static final Duration DEFAULT_REQUEST_TIMEOUT = Duration.ofSeconds(5);
-    public static final URI DEFAULT_API_ENDPOINT_URI = URI.create("https://figbash.com/claims/data/claims.json");
+    public static final URI DEFAULT_API_ENDPOINT_URI = URI.create("https://spawntown.com/map/data/claims.json");
 
     @Override
     public boolean isClaimBoundaryCorrectionEnabled() {
