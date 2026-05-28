@@ -63,9 +63,7 @@ public class RenderPassBuilder {
                 renderPass.setPipeline(this.pipeline);
                 if (this.uniformSetter != null) this.uniformSetter.accept(renderPass);
 
-                RenderSystem.AutoStorageIndexBuffer indexBuffer = RenderSystem.getSequentialBuffer(this.pipeline.getVertexFormatMode());
                 renderPass.setVertexBuffer(0, vertexBuffer);
-                renderPass.setIndexBuffer(indexBuffer.getBuffer(meshData.drawState().indexCount()), indexBuffer.type());
                 renderPass.draw(0, meshData.drawState().indexCount());
             }
         }
