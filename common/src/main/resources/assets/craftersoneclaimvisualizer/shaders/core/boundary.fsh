@@ -3,24 +3,26 @@
 #moj_import <minecraft:fog.glsl>
 #moj_import <minecraft:dynamictransforms.glsl>
 
-in vec4 vertexColor;
 in float sphericalVertexDistance;
 in float cylindricalVertexDistance;
 
 out vec4 fragColor;
 
 layout(std140) uniform BoundaryUniforms {
+    float boundaryMinY;
+    float boundaryMaxY;
+    vec4 boundaryColor;
     int boundaryFogEnabled;
 };
 
 void main() {
-    if (vertexColor.a == 0.0) {
+    if (boundaryColor.a == 0.0) {
         discard;
     }
 
     if (boundaryFogEnabled != 0) {
-        fragColor = apply_fog(vertexColor * ColorModulator, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+        fragColor = apply_fog(boundaryColor * ColorModulator, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
     } else {
-        fragColor = vertexColor * ColorModulator;
+        fragColor = boundaryColor * ColorModulator;
     }
 }

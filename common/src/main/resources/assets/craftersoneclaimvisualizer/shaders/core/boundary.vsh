@@ -5,17 +5,22 @@
 #moj_import <minecraft:projection.glsl>
 
 in vec3 Position;
-in vec4 Color;
 
-out vec4 vertexColor;
 out float sphericalVertexDistance;
 out float cylindricalVertexDistance;
 
+layout(std140) uniform BoundaryUniforms {
+    float boundaryMinY;
+    float boundaryMaxY;
+    vec4 boundaryColor;
+    int boundaryFogEnabled;
+};
+
 void main() {
-    vec4 viewPos = ModelViewMat * vec4(Position, 1.0);
+    vec3 worldPosition = vec3(Position.x, mix(boundaryMinY, boundaryMaxY, Position.y), Position.z);
+    vec4 viewPos = ModelViewMat * vec4(worldPosition, 1.0);
     gl_Position = ProjMat * viewPos;
 
-    vertexColor = Color;
     sphericalVertexDistance = fog_spherical_distance(vec3(viewPos));
     cylindricalVertexDistance = fog_cylindrical_distance(vec3(viewPos));
 }

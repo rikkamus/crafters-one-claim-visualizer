@@ -7,8 +7,7 @@
   "vertex": "craftersoneclaimvisualizer:boundary",
   "fragment": "craftersoneclaimvisualizer:boundary",
   "attributes": [
-    "Position",
-    "Color"
+    "Position"
   ],
   "samplers": [],
   "uniforms": [
@@ -79,6 +78,33 @@
     },
     {
       "name": "FogColor",
+      "type": "float",
+      "count": 4,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "boundaryMinY",
+      "type": "float",
+      "count": 1,
+      "values": [
+        0.0
+      ]
+    },
+    {
+    "name": "boundaryMaxY",
+    "type": "float",
+    "count": 1,
+      "values": [
+        0.0
+      ]
+    },
+    {
+      "name": "boundaryColor",
       "type": "float",
       "count": 4,
       "values": [

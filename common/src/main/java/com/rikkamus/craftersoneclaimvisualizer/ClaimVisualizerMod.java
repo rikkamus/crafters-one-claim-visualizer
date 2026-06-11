@@ -14,11 +14,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 import org.slf4j.Logger;
 
 import java.util.Collection;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
@@ -61,8 +59,7 @@ public final class ClaimVisualizerMod {
                     Collection<Claim> claims = this.pendingClaimRequest.join();
 
                     if (this.claimManager == null) this.claimManager = new ClaimManager();
-                    this.claimManager.clearClaims();
-                    this.claimManager.addAllClaims(claims);
+                    this.claimManager.setClaims(claims);
 
                     LOGGER.info("Claims loaded!");
                     ChatLogger.log("Claims loaded!", ChatFormatting.GREEN);
@@ -92,16 +89,15 @@ public final class ClaimVisualizerMod {
 
         Profiler.get().push("claim_boundaries");
 
-        Vector3f defaultRgb = this.config.getDefaultClaimBoundaryRgb();
-
         this.claimManager.renderClaimBoundaries(
             context,
             this.config.getClaimBoundaryMinY(),
             this.config.getClaimBoundaryMaxY(),
-            claim -> this.config.isDefaultBoundaryColorForced() ? defaultRgb : Objects.requireNonNullElse(claim.getRgb(), defaultRgb),
+            this.config.getDefaultClaimBoundaryRgb(),
             this.config.getClaimBoundaryFillOpacity(),
             this.config.getClaimBoundaryOutlineOpacity(),
             this.config.isClaimBoundaryCorrectionEnabled(),
+            this.config.isDefaultBoundaryColorForced(),
             this.config.isClaimBoundaryFogEnabled()
         );
 

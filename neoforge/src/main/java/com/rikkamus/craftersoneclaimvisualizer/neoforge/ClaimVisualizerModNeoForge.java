@@ -54,7 +54,7 @@ public class ClaimVisualizerModNeoForge {
         viewMatrix.invert();
         viewMatrix.translate(camera.position().reverse().toVector3f());
 
-        RenderContext context = new RenderContext(ClaimVisualizerMod.MOD_ID, viewMatrix);
+        RenderContext context = new RenderContext(viewMatrix);
         this.mod.renderClaimBoundaries(context);
     }
 
