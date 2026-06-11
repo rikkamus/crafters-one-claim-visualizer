@@ -9,10 +9,18 @@ in float cylindricalVertexDistance;
 
 out vec4 fragColor;
 
+layout(std140) uniform BoundaryUniforms {
+    int boundaryFogEnabled;
+};
+
 void main() {
     if (vertexColor.a == 0.0) {
         discard;
     }
 
-    fragColor = apply_fog(vertexColor * ColorModulator, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+    if (boundaryFogEnabled != 0) {
+        fragColor = apply_fog(vertexColor * ColorModulator, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+    } else {
+        fragColor = vertexColor * ColorModulator;
+    }
 }

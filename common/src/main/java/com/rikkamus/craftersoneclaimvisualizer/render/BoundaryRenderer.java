@@ -1,6 +1,9 @@
 package com.rikkamus.craftersoneclaimvisualizer.render;
 
+import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
+import com.mojang.blaze3d.buffers.Std140Builder;
+import com.mojang.blaze3d.buffers.Std140SizeCalculator;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.rikkamus.craftersoneclaimvisualizer.Boundary;
@@ -15,7 +18,9 @@ import java.awt.*;
 @UtilityClass
 public class BoundaryRenderer {
 
-    public static void renderBoundaries(RenderContext context, Iterable<Boundary> boundaries) {
+    private static final int UNIFORM_BUFFER_SIZE = new Std140SizeCalculator().putInt().get();
+
+    public static void renderBoundaries(RenderContext context, Iterable<Boundary> boundaries, boolean applyFog) {
         GpuBufferSlice dynamicTransforms = RenderSystem.getDynamicUniforms().writeTransform(
             context.viewMatrix(),
             new Vector4f(1f, 1f, 1f, 1f),
@@ -23,29 +28,37 @@ public class BoundaryRenderer {
             new Matrix4f()
         );
 
-        RenderPassBuilder.withPipeline(BoundaryPipelines.BOUNDARY_FILL_PIPELINE)
-            .withVertices(vertexConsumer -> {
-                QuadRenderer renderer = (bottomLeft, bottomRight, topRight, topLeft, rgba) -> {
-                    renderQuadTriangles(vertexConsumer, bottomLeft, bottomRight, topRight, topLeft, rgba);
-                };
+        try(GpuBuffer ubo = RenderSystem.getDevice().createBuffer(() -> context.name(), GpuBuffer.USAGE_UNIFORM | GpuBuffer.USAGE_MAP_WRITE, BoundaryRenderer.UNIFORM_BUFFER_SIZE)) {
+            try (GpuBuffer.MappedView view = RenderSystem.getDevice().createCommandEncoder().mapBuffer(ubo, false, true)) {
+                Std140Builder.intoBuffer(view.data()).putInt(applyFog ? 1 : 0);
+            }
 
-                boundaries.forEach(boundary -> renderVerticalPrism(boundary.getBase(), boundary.getY1(), boundary.getY2(), boundary.getFillRgba(), renderer));
-            })
-            .withDefaultUniforms()
-            .withUniform("DynamicTransforms", dynamicTransforms)
-            .renderToMainTarget(context.name());
+            RenderPassBuilder.withPipeline(BoundaryPipelines.BOUNDARY_FILL_PIPELINE)
+                             .withVertices(vertexConsumer -> {
+                                 QuadRenderer renderer = (bottomLeft, bottomRight, topRight, topLeft, rgba) -> {
+                                     renderQuadTriangles(vertexConsumer, bottomLeft, bottomRight, topRight, topLeft, rgba);
+                                 };
 
-        RenderPassBuilder.withPipeline(BoundaryPipelines.BOUNDARY_OUTLINE_PIPELINE)
-            .withVertices(vertexConsumer -> {
-                QuadRenderer renderer = (bottomLeft, bottomRight, topRight, topLeft, rgba) -> {
-                    renderQuadOutline(vertexConsumer, bottomLeft, bottomRight, topRight, topLeft, rgba);
-                };
+                                 boundaries.forEach(boundary -> renderVerticalPrism(boundary.getBase(), boundary.getY1(), boundary.getY2(), boundary.getFillRgba(), renderer));
+                             })
+                             .withDefaultUniforms()
+                             .withUniform("DynamicTransforms", dynamicTransforms)
+                             .withUniform("BoundaryUniforms", ubo)
+                             .renderToMainTarget(context.name());
 
-                boundaries.forEach(boundary -> renderVerticalPrism(boundary.getBase(), boundary.getY1(), boundary.getY2(), boundary.getOutlineRgba(), renderer));
-            })
-            .withDefaultUniforms()
-            .withUniform("DynamicTransforms", dynamicTransforms)
-            .renderToMainTarget(context.name());
+            RenderPassBuilder.withPipeline(BoundaryPipelines.BOUNDARY_OUTLINE_PIPELINE)
+                             .withVertices(vertexConsumer -> {
+                                 QuadRenderer renderer = (bottomLeft, bottomRight, topRight, topLeft, rgba) -> {
+                                     renderQuadOutline(vertexConsumer, bottomLeft, bottomRight, topRight, topLeft, rgba);
+                                 };
+
+                                 boundaries.forEach(boundary -> renderVerticalPrism(boundary.getBase(), boundary.getY1(), boundary.getY2(), boundary.getOutlineRgba(), renderer));
+                             })
+                             .withDefaultUniforms()
+                             .withUniform("DynamicTransforms", dynamicTransforms)
+                             .withUniform("BoundaryUniforms", ubo)
+                             .renderToMainTarget(context.name());
+        }
     }
 
     private static void renderVerticalPrism(Polygon base, float y1, float y2, Vector4f rgba, QuadRenderer renderer) {

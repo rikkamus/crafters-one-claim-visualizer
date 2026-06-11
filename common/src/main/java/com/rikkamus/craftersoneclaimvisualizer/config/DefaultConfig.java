@@ -16,6 +16,7 @@ public class DefaultConfig implements ClaimVisualizerConfig {
     public static final boolean DEFAULT_FORCE_DEFAULT_BOUNDARY_COLOR = false;
     public static final float DEFAULT_BOUNDARY_FILL_OPACITY = 0.2f;
     public static final float DEFAULT_BOUNDARY_OUTLINE_OPACITY = 0.8f;
+    public static final boolean DEFAULT_BOUNDARY_FOG_ENABLED = true;
     public static final int DEFAULT_OVERLAY_X = 5;
     public static final int DEFAULT_OVERLAY_Y = 5;
     public static final Alignment DEFAULT_OVERLAY_HORIZONTAL_ALIGNMENT = Alignment.START;
@@ -56,6 +57,11 @@ public class DefaultConfig implements ClaimVisualizerConfig {
     @Override
     public boolean isDefaultBoundaryColorForced() {
         return DefaultConfig.DEFAULT_FORCE_DEFAULT_BOUNDARY_COLOR;
+    }
+
+    @Override
+    public boolean isClaimBoundaryFogEnabled() {
+        return DefaultConfig.DEFAULT_BOUNDARY_FOG_ENABLED;
     }
 
     @Override

@@ -44,6 +44,11 @@ public class RenderPassBuilder {
         return this;
     }
 
+    public RenderPassBuilder withUniform(String name, GpuBuffer buffer) {
+        this.uniformSetter = RenderPassBuilder.andThen(this.uniformSetter, renderPass -> renderPass.setUniform(name, buffer));
+        return this;
+    }
+
     public void renderToMainTarget(String name) {
         render(name, Minecraft.getInstance().getMainRenderTarget());
     }

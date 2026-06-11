@@ -21,6 +21,7 @@ public class BoundaryPipelines {
         BOUNDARY_SNIPPET = RenderPipeline.builder()
                                          .withUniform("DynamicTransforms", UniformType.UNIFORM_BUFFER)
                                          .withUniform("Projection", UniformType.UNIFORM_BUFFER)
+                                         .withUniform("BoundaryUniforms", UniformType.UNIFORM_BUFFER)
                                          .buildSnippet();
 
         BOUNDARY_FILL_PIPELINE = RenderPipeline.builder(BoundaryPipelines.BOUNDARY_SNIPPET)

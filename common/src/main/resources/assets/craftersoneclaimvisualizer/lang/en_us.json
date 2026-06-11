@@ -12,6 +12,7 @@
   "text.autoconfig.craftersoneclaimvisualizer.option.defaultClaimBoundaryColorForced": "Always Use Default Color",
   "text.autoconfig.craftersoneclaimvisualizer.option.claimBoundaryFillOpacity": "Fill Opacity",
   "text.autoconfig.craftersoneclaimvisualizer.option.claimBoundaryOutlineOpacity": "Outline Opacity",
+  "text.autoconfig.craftersoneclaimvisualizer.option.claimBoundaryFogEnabled": "Fog",
 
   "text.autoconfig.craftersoneclaimvisualizer.option.overlayX": "Horizontal Offset",
   "text.autoconfig.craftersoneclaimvisualizer.option.overlayY": "Vertical Offset",

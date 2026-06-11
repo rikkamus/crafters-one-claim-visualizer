@@ -101,7 +101,8 @@ public final class ClaimVisualizerMod {
             claim -> this.config.isDefaultBoundaryColorForced() ? defaultRgb : Objects.requireNonNullElse(claim.getRgb(), defaultRgb),
             this.config.getClaimBoundaryFillOpacity(),
             this.config.getClaimBoundaryOutlineOpacity(),
-            this.config.isClaimBoundaryCorrectionEnabled()
+            this.config.isClaimBoundaryCorrectionEnabled(),
+            this.config.isClaimBoundaryFogEnabled()
         );
 
         Profiler.get().pop();

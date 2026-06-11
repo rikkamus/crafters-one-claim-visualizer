@@ -20,7 +20,7 @@ public class ClaimManager {
     @Getter
     private final List<Claim> claims = new ArrayList<>();
 
-    public void renderClaimBoundaries(RenderContext context, float y1, float y2, Function<Claim, Vector3f> rgbSupplier, float fillOpacity, float outlineOpacity, boolean useCorrectedShape) {
+    public void renderClaimBoundaries(RenderContext context, float y1, float y2, Function<Claim, Vector3f> rgbSupplier, float fillOpacity, float outlineOpacity, boolean useCorrectedShape, boolean applyFog) {
         BoundaryRenderer.renderBoundaries(context, this.claims.stream().map(claim -> {
             Vector3f claimRgb = rgbSupplier.apply(claim);
             Vector4f fillRgba = new Vector4f(claimRgb.x, claimRgb.y, claimRgb.z, fillOpacity);
@@ -28,7 +28,7 @@ public class ClaimManager {
 
             Polygon shape = useCorrectedShape ? claim.getCorrectedShape() : claim.getRawShape();
             return new Boundary(shape, y1, y2, fillRgba, outlineRgba);
-        }).toList());
+        }).toList(), applyFog);
     }
 
     public Optional<Claim> getClaimAt(double x, double z, boolean useCorrectedShape) {

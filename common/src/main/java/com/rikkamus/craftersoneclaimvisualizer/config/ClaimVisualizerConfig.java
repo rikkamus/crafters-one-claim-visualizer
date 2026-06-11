@@ -22,6 +22,8 @@ public interface ClaimVisualizerConfig {
 
     boolean isDefaultBoundaryColorForced();
 
+    boolean isClaimBoundaryFogEnabled();
+
     int getOverlayX();
 
     int getOverlayY();

@@ -49,6 +49,10 @@ public class ClothConfig implements ClaimVisualizerConfig, ConfigData {
     @Comment("Opacity of claim boundary outlines, specified as a percentage value between 0 and 100.")
     private int claimBoundaryOutlineOpacity = (int) (DefaultConfig.DEFAULT_BOUNDARY_OUTLINE_OPACITY * 100f);
 
+    @ConfigEntry.Category("claimboundaries")
+    @Comment("Determines whether claim boundaries are affected by fog.")
+    private boolean claimBoundaryFogEnabled = DefaultConfig.DEFAULT_BOUNDARY_FOG_ENABLED;
+
     @ConfigEntry.Category("claiminfooverlay")
     @Comment("""
         Positive values define distance from the left edge of the screen.
@@ -182,6 +186,11 @@ public class ClothConfig implements ClaimVisualizerConfig, ConfigData {
     @Override
     public boolean isDefaultBoundaryColorForced() {
         return this.defaultClaimBoundaryColorForced;
+    }
+
+    @Override
+    public boolean isClaimBoundaryFogEnabled() {
+        return this.claimBoundaryFogEnabled;
     }
 
     @Override
