@@ -41,9 +41,7 @@ subprojects {
     }
 
     dependencies {
-        implementation "com.fasterxml.jackson.core:jackson-core:$rootProject.jackson_version"
-        implementation "com.fasterxml.jackson.core:jackson-annotations:$rootProject.jackson_annotations_version"
-        implementation "com.fasterxml.jackson.core:jackson-databind:$rootProject.jackson_version"
+        implementation "org.json:json:$rootProject.json_java_version"
 
         compileOnly("org.projectlombok:lombok:$rootProject.lombok_version")
         annotationProcessor("org.projectlombok:lombok:$rootProject.lombok_version")
