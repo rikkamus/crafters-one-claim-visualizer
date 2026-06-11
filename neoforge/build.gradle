@@ -32,7 +32,7 @@ repositories {
 }
 
 dependencies {
-    include "org.json:json:$rootProject.json_java_version"
+    runtimeOnly "org.json:json:$rootProject.json_java_version"
 
     neoForge "net.neoforged:neoforge:$rootProject.neoforge_version"
 

@@ -41,8 +41,6 @@ subprojects {
     }
 
     dependencies {
-        implementation "org.json:json:$rootProject.json_java_version"
-
         compileOnly("org.projectlombok:lombok:$rootProject.lombok_version")
         annotationProcessor("org.projectlombok:lombok:$rootProject.lombok_version")
 
