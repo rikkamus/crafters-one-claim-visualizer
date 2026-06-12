@@ -30,10 +30,10 @@ public class ClaimRepository implements AutoCloseable {
     }
 
     private static Claim parseClaim(JSONObject jsonClaim) {
-        String claimId = jsonClaim.has("claimID") ? jsonClaim.getString("claimID") : null;
-        String owner = jsonClaim.has("owner") ? jsonClaim.getString("owner") : null;
-        String type = jsonClaim.has("type") ? jsonClaim.getString("type") : null;
-        Vector3f rgb = jsonClaim.has("color") ? Color.parseRgbaHex(jsonClaim.getString("color")).xyz(new Vector3f()) : null;
+        String claimId = jsonClaim.has("claimID") && !jsonClaim.isNull("claimID") ? jsonClaim.getString("claimID") : null;
+        String owner = jsonClaim.has("owner") && !jsonClaim.isNull("owner") ? jsonClaim.getString("owner") : null;
+        String type = jsonClaim.has("type") && !jsonClaim.isNull("type") ? jsonClaim.getString("type") : null;
+        Vector3f rgb = jsonClaim.has("color") && !jsonClaim.isNull("color") ? Color.parseRgbaHex(jsonClaim.getString("color")).xyz(new Vector3f()) : null;
 
         JSONArray jsonPoints = jsonClaim.getJSONArray("coords");
         List<Vector2i> points = new ArrayList<>(jsonPoints.length());
